@@ -7,7 +7,7 @@ import "runar-himmel/internal/types"
 type Credentials struct {
 	// example: loki@runar-himmel.sky
 	Email string `json:"email" form:"email" validate:"required_without=Username"`
-	// example: customer123!@#
+	// example: user123!@#
 	Password string `json:"password" form:"password" validate:"required"`
 
 	// This is for SwaggerUI authentication which only support `username` field

@@ -17,6 +17,7 @@ const (
 	ObjectAny     = "*"
 	ObjectUser    = "user"
 	ObjectSession = "session"
+	ObjectMemo    = "memo"
 )
 
 // Custom errors

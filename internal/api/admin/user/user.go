@@ -59,25 +59,25 @@ func (s *User) List(c contextutil.Context, req ListUserReq) (*ListUsersResp, err
 	// ! there are 3 ways to initialize filter and maybe more to be explored
 	// * 1. using default
 	// * initialize filter
-	// filter := map[string]any{}
-	// lqc := req.ToListQueryCond([]any{filter})
 
 	// var count int64 = 0
 	// data := []*types.User{}
+	// filter := map[string]any{}
+	// lqc := req.ToListQueryCond([]any{filter})
 	// if err := s.repo.User.ReadAllByCondition(c.GetContext(), &data, &count, lqc); err != nil {
 	// 	return nil, server.NewHTTPInternalError("Error listing user").SetInternal(err)
 	// }
 
 	// * 2. add filter directly from request
-	// filter := map[string]any{}
-	// // ! this will be translated to "first_name LIKE %req.Name%"
-	// // ! any other filter that use gowhere must be added before mapping to ListQueryCondition
-	// filter["first_name__contains"] = req.Name
-	// filter["role"] = "admin"
-	// lqc := req.ToListQueryCond([]any{filter})
+	// ! this will be translated to "first_name LIKE %req.Name%"
+	// ! any other filter that use gowhere must be added before mapping to ListQueryCondition
 
 	// var count int64 = 0
 	// data := []*types.User{}
+	// filter := map[string]any{}
+	// filter["first_name__contains"] = req.Name
+	// filter["role"] = "admin"
+	// lqc := req.ToListQueryCond([]any{filter})
 	// if err := s.repo.User.ReadAllByCondition(c.GetContext(), &data, &count, lqc); err != nil {
 	// 	return nil, server.NewHTTPInternalError("Error listing user").SetInternal(err)
 	// }
@@ -85,6 +85,7 @@ func (s *User) List(c contextutil.Context, req ListUserReq) (*ListUsersResp, err
 	// * 3. using custom filter
 	// * that defines in type.go
 	// * the logic will be processed in repo
+
 	var count int64 = 0
 	data := []*types.User{}
 	if err := s.repo.User.List(c.GetContext(), &data, &count, req.ToListCond()); err != nil {

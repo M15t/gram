@@ -4,6 +4,6 @@ package types
 // swagger:model
 type Memo struct {
 	Base
-	UserID  string `json:"user_id"`
+	UserID  string `json:"-"  gorm:"not null"`
 	Content string `json:"memo" gorm:"type:text"`
 }

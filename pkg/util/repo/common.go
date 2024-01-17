@@ -5,6 +5,7 @@ import (
 	requestutil "runar-himmel/pkg/util/request"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 // NewRepo creates new Repo instance
@@ -27,7 +28,7 @@ func (d *Repo[T]) CreateInBatches(ctx context.Context, input []T, batchSize int)
 	return d.GDB.WithContext(ctx).CreateInBatches(input, batchSize).Error
 }
 
-// Read get a record by primary key
+// Read get a record by conds
 func (d *Repo[T]) Read(ctx context.Context, output *T, conds ...any) error {
 	return d.GDB.WithContext(ctx).First(output, parseConds(conds)...).Error
 }
@@ -35,6 +36,16 @@ func (d *Repo[T]) Read(ctx context.Context, output *T, conds ...any) error {
 // ReadByID gets a record by primary key
 func (d *Repo[T]) ReadByID(ctx context.Context, output *T, id string) error {
 	return d.GDB.WithContext(ctx).Where(`id = ?`, id).Take(output).Error
+}
+
+// ReadByUpdate gets a record and lock it for update
+func (d *Repo[T]) ReadByUpdate(ctx context.Context, options string, output *T, conds ...any) error {
+	db := d.GDB.WithContext(ctx).Clauses(clause.Locking{
+		Strength: "UPDATE",
+		Options:  options, // "NOWAIT" or "SKIP LOCKED" (PostgreSQL only)
+	})
+
+	return db.Take(output, parseConds(conds)...).Error
 }
 
 // List gets all records that match given conditions

@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"fmt"
 	"runar-himmel/internal/types"
 	"runar-himmel/pkg/server/middleware/jwt"
 	"runar-himmel/pkg/util/ulidutil"
@@ -23,7 +22,7 @@ func (s *Auth) authenticate(c echo.Context, ai *AuthenticateInput) (*types.AuthT
 		Claims: map[string]interface{}{
 			"id":    ai.User.ID,
 			"email": ai.User.Email,
-			"name":  fmt.Sprintf("%s %s", ai.User.FirstName, ai.User.LastName),
+			"name":  ai.User.FirstName + " " + ai.User.LastName,
 			"role":  ai.User.Role,
 		},
 	}, &accessTokenOutput); err != nil {

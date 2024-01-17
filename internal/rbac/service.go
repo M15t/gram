@@ -11,6 +11,12 @@ func New(enableLog bool) *rbac.RBAC {
 	// Add permission for user role
 	r.AddPolicy(RoleUser, ObjectUser, ActionReadAll)
 
+	r.AddPolicy(RoleUser, ObjectMemo, ActionCreate)
+	r.AddPolicy(RoleUser, ObjectMemo, ActionRead)
+	r.AddPolicy(RoleUser, ObjectMemo, ActionReadAll)
+	r.AddPolicy(RoleUser, ObjectMemo, ActionUpdate)
+	r.AddPolicy(RoleUser, ObjectMemo, ActionDelete)
+
 	// Add permission for admin role
 	r.AddPolicy(RoleAdmin, ObjectUser, ActionAny)
 	r.AddPolicy(RoleAdmin, ObjectSession, ActionAny)

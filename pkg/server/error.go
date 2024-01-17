@@ -61,10 +61,16 @@ func NewHTTPValidationError(message string) *HTTPError {
 
 // Error makes it compatible with `error` interface
 func (he *HTTPError) Error() string {
-	if he.Internal == nil {
-		return fmt.Sprintf("code=%d, type=%s, message=%s", he.Code, he.Type, he.Message)
+	err := strings.Builder{}
+
+	switch {
+	case he.Internal != nil:
+		err.WriteString(fmt.Sprintf("code=%d, type=%s, message=%s, internal=%v", he.Code, he.Type, he.Message, he.Internal))
+	default:
+		err.WriteString(fmt.Sprintf("code=%d, type=%s, message=%s", he.Code, he.Type, he.Message))
 	}
-	return fmt.Sprintf("code=%d, type=%s, message=%s, internal=%v", he.Code, he.Type, he.Message, he.Internal)
+
+	return err.String()
 }
 
 // SetInternal sets actual internal error for more details

@@ -30,15 +30,7 @@ func New(dialect string, cfg config.DB, gormConfig *gorm.Config) (db *gorm.DB, e
 		}
 
 		// generate the connection string
-		dbDsn := fmt.Sprintf(
-			"%s:%s@tcp(%s:%d)/%s?%s",
-			cfg.Username,
-			cfg.Password,
-			cfg.Host,
-			cfg.Port,
-			cfg.Database,
-			params.Encode(),
-		)
+		dbDsn := cfg.Username + ":" + cfg.Password + "@tcp(" + cfg.Host + ":" + fmt.Sprint(cfg.Port) + ")/" + cfg.Database + "?" + params.Encode()
 
 		var datetimePrecision = 3
 		db, err = gorm.Open(mysql.New(mysql.Config{
@@ -62,15 +54,7 @@ func New(dialect string, cfg config.DB, gormConfig *gorm.Config) (db *gorm.DB, e
 		}
 
 		// generate the connection string
-		dbDsn := fmt.Sprintf(
-			"postgres://%s:%s@%s:%d/%s?%s",
-			cfg.Username,
-			cfg.Password,
-			cfg.Host,
-			cfg.Port,
-			cfg.Database,
-			params.Encode(),
-		)
+		dbDsn := "postgres://" + cfg.Username + ":" + cfg.Password + "@" + cfg.Host + ":" + fmt.Sprint(cfg.Port) + "/" + cfg.Database + "?" + params.Encode()
 
 		db, err = gorm.Open(postgres.New(postgres.Config{
 			DSN: dbDsn,

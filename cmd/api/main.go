@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	"runar-himmel/config"
+	"runar-himmel/internal/api/admin/memo"
 	"runar-himmel/internal/api/admin/session"
 	"runar-himmel/internal/api/admin/user"
 	"runar-himmel/internal/api/auth"
@@ -53,7 +54,7 @@ func main() {
 
 	if enableSwagger {
 		// Static page for SwaggerUI
-		e.GET("/swagger-ui*", echo.StaticDirectoryHandler(echo.MustSubFS(swaggerui, "swagger-ui"), false), secure.DisableCache())
+		e.GET("/swagger-ui/*", echo.StaticDirectoryHandler(echo.MustSubFS(swaggerui, "swagger-ui"), false), secure.DisableCache())
 	}
 
 	// Initialize core services
@@ -66,6 +67,7 @@ func main() {
 	authSvc := auth.New(repoSvc, jwtSvc, crypterSvc)
 	sessionSvc := session.New(repoSvc, rbacSvc)
 	userSvc := user.New(repoSvc, rbacSvc, crypterSvc)
+	memoSvc := memo.New(repoSvc, rbacSvc)
 
 	// Initialize root API
 	root.NewHTTP(e)
@@ -77,6 +79,7 @@ func main() {
 	adminRouter.Use(jwtSvc.MWFunc(), contextutil.MWContext())
 	session.NewHTTP(sessionSvc, adminRouter.Group("/sessions"))
 	user.NewHTTP(userSvc, adminRouter.Group("/users"))
+	memo.NewHTTP(memoSvc, adminRouter.Group("/memos"))
 
 	server.Start(e, config.IsLambda())
 }

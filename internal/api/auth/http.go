@@ -50,18 +50,18 @@ func NewHTTP(svc Service, eg *echo.Group) {
 
 	// swagger:operation POST /auth/refresh-token auth authRefreshToken
 	// ---
-	// summary: Refresh access token
+	// summary: Refresh access token.
 	// security: []
 	// parameters:
 	// - name: token
 	//   in: body
-	//   description: The given `refresh_token` when login
+	//   description: The given `refresh_token` when login.
 	//   required: true
 	//   schema:
 	//     "$ref": "#/definitions/RefreshTokenData"
 	// responses:
 	//   "200":
-	//     description: New access token
+	//     description: New access token. The new `refresh_token` will be returned only if the `access_token` is expired
 	//     schema:
 	//       "$ref": "#/definitions/AuthToken"
 	//   default:
