@@ -1,10 +1,10 @@
 package session
 
 import (
+	contextutil "himin-runar/internal/api/context"
+	"himin-runar/internal/types"
+	httputil "himin-runar/pkg/util/http"
 	"net/http"
-	contextutil "runar-himmel/internal/api/context"
-	"runar-himmel/internal/types"
-	httputil "runar-himmel/pkg/util/http"
 
 	"github.com/labstack/echo/v4"
 )

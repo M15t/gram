@@ -1,13 +1,13 @@
 package session
 
 import (
-	"runar-himmel/internal/rbac"
-	"runar-himmel/internal/types"
-	"runar-himmel/pkg/server"
+	"himin-runar/internal/rbac"
+	"himin-runar/internal/types"
+	"himin-runar/pkg/server"
 
-	contextutil "runar-himmel/internal/api/context"
+	contextutil "himin-runar/internal/api/context"
 
-	structutil "runar-himmel/pkg/util/struct"
+	structutil "himin-runar/pkg/util/struct"
 )
 
 // Read returns single session by id

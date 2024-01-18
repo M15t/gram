@@ -2,9 +2,10 @@ package repo
 
 import (
 	"context"
-	"runar-himmel/internal/types"
+	"fmt"
+	"himin-runar/internal/types"
 
-	repoutil "runar-himmel/pkg/util/repo"
+	repoutil "himin-runar/pkg/util/repo"
 
 	"gorm.io/gorm"
 )
@@ -21,8 +22,9 @@ func NewSession(gdb *gorm.DB) *Session {
 
 // FindByID finds a session by the given ID and preload User
 func (r *Session) FindByID(ctx context.Context, id, userID string) (rec *types.Session, err error) {
+	fmt.Println("repo/session.go: FindByID: id: ", id, " userID: ", userID)
 	rec = &types.Session{}
-	err = r.GDB.Preload(`User`).Take(rec).Where(`id = ? AND user_id = ? AND is_blocked = false`, id, userID).Error
+	err = r.GDB.Preload(`User`).Where(`id = ? AND user_id = ? AND is_blocked = false`, id, userID).Take(rec).Error
 
 	return
 }

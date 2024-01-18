@@ -1,8 +1,8 @@
 package structutil_test
 
 import (
+	structutil "himin-runar/pkg/util/struct"
 	"reflect"
-	structutil "runar-himmel/pkg/util/struct"
 	"testing"
 )
 

@@ -17,7 +17,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
 
-	"runar-himmel/pkg/server/middleware/secure"
+	"himin-runar/pkg/server/middleware/secure"
 
 	echoadapter "github.com/awslabs/aws-lambda-go-api-proxy/echo"
 )

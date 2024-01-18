@@ -1,9 +1,10 @@
 package auth
 
 import (
-	"runar-himmel/internal/types"
-	"runar-himmel/pkg/server/middleware/jwt"
-	"runar-himmel/pkg/util/ulidutil"
+	"database/sql"
+	"himin-runar/internal/types"
+	"himin-runar/pkg/server/middleware/jwt"
+	"himin-runar/pkg/util/ulidutil"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -50,11 +51,13 @@ func (s *Auth) authenticate(c echo.Context, ai *AuthenticateInput) (*types.AuthT
 			IPAddress: c.RealIP(),
 			UserAgent: c.Request().UserAgent(),
 			ExpiresAt: time.Now().Add(time.Duration(refreshTokenOutput.ExpiresIn) * time.Second),
+			RefreshToken: sql.NullString{
+				String: refreshTokenOutput.Token,
+				Valid:  true,
+			},
 		}); err != nil {
 			return nil, err
 		}
-
-		updates["refresh_token"] = refreshTokenOutput.Token
 	}
 
 	// update last_login and refresh_token

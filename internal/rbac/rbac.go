@@ -3,7 +3,7 @@ package rbac
 import (
 	"net/http"
 
-	"runar-himmel/pkg/server"
+	"himin-runar/pkg/server"
 )
 
 // consts for RBAC

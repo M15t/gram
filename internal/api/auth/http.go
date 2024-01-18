@@ -7,8 +7,8 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/samber/lo"
 
-	"runar-himmel/internal/types"
-	"runar-himmel/pkg/server"
+	"himin-runar/internal/types"
+	"himin-runar/pkg/server"
 )
 
 // HTTP represents auth http service

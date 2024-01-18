@@ -1,6 +1,6 @@
 //go:build swagger
 
-// Rúnar Himmel is an enchanting Golang project inspired by Norse mythology
+// Himin Rúnar is an enchanting Golang project inspired by Norse mythology
 //
 // API documents for Rúnar Himmel.
 //

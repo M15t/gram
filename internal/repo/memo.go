@@ -1,9 +1,9 @@
 package repo
 
 import (
-	"runar-himmel/internal/types"
+	"himin-runar/internal/types"
 
-	repoutil "runar-himmel/pkg/util/repo"
+	repoutil "himin-runar/pkg/util/repo"
 
 	"gorm.io/gorm"
 )

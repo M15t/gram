@@ -2,8 +2,8 @@ package dbutil
 
 import (
 	"fmt"
+	"himin-runar/config"
 	"net/url"
-	"runar-himmel/config"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"

@@ -1,8 +1,8 @@
 package session
 
 import (
+	"himin-runar/pkg/server"
 	"net/http"
-	"runar-himmel/pkg/server"
 )
 
 // Custom errors

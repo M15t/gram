@@ -1,8 +1,8 @@
 package memo
 
 import (
-	"runar-himmel/internal/repo"
-	"runar-himmel/pkg/rbac"
+	"himin-runar/internal/repo"
+	"himin-runar/pkg/rbac"
 )
 
 // New creates new memo application service

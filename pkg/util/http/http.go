@@ -1,7 +1,7 @@
 package httputil
 
 import (
-	"runar-himmel/pkg/server"
+	"himin-runar/pkg/server"
 	"strconv"
 	"strings"
 

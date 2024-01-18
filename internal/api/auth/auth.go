@@ -1,9 +1,9 @@
 package auth
 
 import (
-	"runar-himmel/internal/rbac"
-	"runar-himmel/internal/types"
-	"runar-himmel/pkg/server"
+	"database/sql"
+	"himin-runar/internal/rbac"
+	"himin-runar/internal/types"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -69,21 +69,15 @@ func (s *Auth) RefreshToken(c echo.Context, data RefreshTokenData) (*types.AuthT
 	// check if session is expired
 	if time.Now().After(existedSession.ExpiresAt) {
 		// update session to blocked
-		if err := s.repo.Session.Update(c.Request().Context(), &types.Session{
-			IsBlocked: true,
+		// clear refresh token
+		if err := s.repo.Session.Update(c.Request().Context(), map[string]interface{}{
+			"is_blocked":    true,
+			"refresh_token": sql.NullString{String: "", Valid: false},
 		}, existedSession.ID); err != nil {
 			return nil, ErrInvalidRefreshToken.SetInternal(err)
 		}
 
 		return nil, ErrTokenExpired
-	}
-
-	// update session
-	if err := s.repo.Session.Update(c.Request().Context(), &types.Session{
-		IPAddress: c.RealIP(),
-		UserAgent: c.Request().UserAgent(),
-	}, sessionID); err != nil {
-		return nil, server.NewHTTPInternalError("error updating session").SetInternal(err)
 	}
 
 	return s.authenticate(c, &AuthenticateInput{

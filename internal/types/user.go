@@ -37,8 +37,6 @@ type User struct {
 	Password  string     `json:"-" gorm:"not null"`
 	LastLogin *time.Time `json:"last_login,omitempty" gorm:"type:datetime(3)"`
 
-	RefreshToken *string `json:"-" gorm:"uniqueIndex:uix_users_refresh_token"`
-
 	Phone           string     `json:"phone" gorm:"uniqueIndex:uix_users_phone"`
 	PhoneVerifiedAt *time.Time `json:"phone_verified_at,omitempty" gorm:"type:datetime(3)"`
 	OTP             *string    `json:"-" gorm:"varchar(10)"`

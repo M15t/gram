@@ -2,22 +2,22 @@ package main
 
 import (
 	"embed"
-	"runar-himmel/config"
-	"runar-himmel/internal/api/admin/memo"
-	"runar-himmel/internal/api/admin/session"
-	"runar-himmel/internal/api/admin/user"
-	"runar-himmel/internal/api/auth"
-	"runar-himmel/internal/api/root"
-	"runar-himmel/internal/db"
-	"runar-himmel/internal/rbac"
-	"runar-himmel/internal/repo"
+	"himin-runar/config"
+	"himin-runar/internal/api/admin/memo"
+	"himin-runar/internal/api/admin/session"
+	"himin-runar/internal/api/admin/user"
+	"himin-runar/internal/api/auth"
+	"himin-runar/internal/api/root"
+	"himin-runar/internal/db"
+	"himin-runar/internal/rbac"
+	"himin-runar/internal/repo"
 
-	"runar-himmel/pkg/server"
-	"runar-himmel/pkg/server/middleware/jwt"
-	"runar-himmel/pkg/server/middleware/secure"
-	"runar-himmel/pkg/util/crypter"
+	"himin-runar/pkg/server"
+	"himin-runar/pkg/server/middleware/jwt"
+	"himin-runar/pkg/server/middleware/secure"
+	"himin-runar/pkg/util/crypter"
 
-	contextutil "runar-himmel/internal/api/context"
+	contextutil "himin-runar/internal/api/context"
 
 	"github.com/labstack/echo/v4"
 )

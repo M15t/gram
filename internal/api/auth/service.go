@@ -1,8 +1,8 @@
 package auth
 
 import (
-	"runar-himmel/internal/repo"
-	"runar-himmel/pkg/server/middleware/jwt"
+	"himin-runar/internal/repo"
+	"himin-runar/pkg/server/middleware/jwt"
 
 	gjwt "github.com/golang-jwt/jwt/v5"
 )

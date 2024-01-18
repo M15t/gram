@@ -1,4 +1,4 @@
-module runar-himmel
+module himin-runar
 
 go 1.21.5
 

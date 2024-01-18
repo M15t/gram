@@ -2,15 +2,15 @@ package main
 
 import (
 	"fmt"
+	"himin-runar/config"
+	"himin-runar/internal/db"
+	"himin-runar/internal/types"
+	"himin-runar/pkg/util/crypter"
+	"himin-runar/pkg/util/migration"
 	"log"
-	"runar-himmel/config"
-	"runar-himmel/internal/db"
-	"runar-himmel/internal/types"
-	"runar-himmel/pkg/util/crypter"
-	"runar-himmel/pkg/util/migration"
 	"time"
 
-	"runar-himmel/internal/rbac"
+	"himin-runar/internal/rbac"
 
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/go-gormigrate/gormigrate/v2"
@@ -97,7 +97,7 @@ func Run() (respErr error) {
 				now := time.Now()
 				defaultUsers := []*types.User{
 					{
-						Email:           "odin@runar-himmel.sky",
+						Email:           "odin@himin-runar.sky",
 						EmailVerifiedAt: &now,
 						Phone:           "+6281234567890",
 						PhoneVerifiedAt: &now,
@@ -106,7 +106,7 @@ func Run() (respErr error) {
 						Role:            rbac.RoleSuperAdmin,
 					},
 					{
-						Email:           "thor@runar-himmel.sky",
+						Email:           "thor@himin-runar.sky",
 						EmailVerifiedAt: &now,
 						Phone:           "+6281234567891",
 						PhoneVerifiedAt: &now,
@@ -115,7 +115,7 @@ func Run() (respErr error) {
 						Role:            rbac.RoleAdmin,
 					},
 					{
-						Email:           "loki@runar-himmel.sky",
+						Email:           "loki@himin-runar.sky",
 						EmailVerifiedAt: &now,
 						Phone:           "+6281234567892",
 						PhoneVerifiedAt: &now,

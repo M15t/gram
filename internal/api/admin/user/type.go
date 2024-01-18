@@ -1,9 +1,9 @@
 package user
 
 import (
-	"runar-himmel/internal/repo"
-	"runar-himmel/internal/types"
-	requestutil "runar-himmel/pkg/util/request"
+	"himin-runar/internal/repo"
+	"himin-runar/internal/types"
+	requestutil "himin-runar/pkg/util/request"
 )
 
 // CreateUserReq contains request data to create new user

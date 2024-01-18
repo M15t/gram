@@ -1,8 +1,8 @@
 package session
 
 import (
-	"runar-himmel/internal/repo"
-	"runar-himmel/pkg/rbac"
+	"himin-runar/internal/repo"
+	"himin-runar/pkg/rbac"
 )
 
 // New creates new session application service
