@@ -1,8 +1,8 @@
 package auth
 
 import (
+	"gram/pkg/server"
 	"net/http"
-	"runar-himmel/pkg/server"
 )
 
 // Custom errors

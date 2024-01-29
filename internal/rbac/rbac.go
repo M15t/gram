@@ -3,14 +3,21 @@ package rbac
 import (
 	"net/http"
 
-	"runar-himmel/pkg/server"
+	"gram/pkg/server"
 )
 
-// RBAC roles
+// consts for RBAC
 const (
+	// roles defined here
 	RoleSuperAdmin = "superadmin"
 	RoleAdmin      = "admin"
-	RoleCustomer   = "customer"
+	RoleUser       = "user"
+
+	// objects defined here
+	ObjectAny     = "*"
+	ObjectUser    = "user"
+	ObjectSession = "session"
+	ObjectMemo    = "memo"
 )
 
 // Custom errors
@@ -20,19 +27,13 @@ var (
 )
 
 // ValidRoles for validation
-var ValidRoles = []string{RoleSuperAdmin, RoleAdmin, RoleCustomer}
-
-// RBAC objects
-const (
-	ObjectAny  = "*"
-	ObjectUser = "user"
-)
+var ValidRoles = []string{RoleSuperAdmin, RoleAdmin, RoleUser}
 
 // RBAC actions
 const (
 	ActionAny       = "*"
-	ActionViewAll   = "view_all"
-	ActionView      = "view"
+	ActionReadAll   = "read_all"
+	ActionRead      = "read"
 	ActionCreateAll = "create_all"
 	ActionCreate    = "create"
 	ActionUpdateAll = "update_all"

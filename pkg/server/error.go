@@ -61,10 +61,16 @@ func NewHTTPValidationError(message string) *HTTPError {
 
 // Error makes it compatible with `error` interface
 func (he *HTTPError) Error() string {
-	if he.Internal == nil {
-		return fmt.Sprintf("code=%d, type=%s, message=%s", he.Code, he.Type, he.Message)
+	err := strings.Builder{}
+
+	switch {
+	case he.Internal != nil:
+		err.WriteString(fmt.Sprintf("code=%d, type=%s, message=%s, internal=%v", he.Code, he.Type, he.Message, he.Internal))
+	default:
+		err.WriteString(fmt.Sprintf("code=%d, type=%s, message=%s", he.Code, he.Type, he.Message))
 	}
-	return fmt.Sprintf("code=%d, type=%s, message=%s, internal=%v", he.Code, he.Type, he.Message, he.Internal)
+
+	return err.String()
 }
 
 // SetInternal sets actual internal error for more details
@@ -115,8 +121,8 @@ func (ce *ErrorHandler) Handle(err error, c echo.Context) {
 			httpErr.Message = e.Message
 		}
 		if e.Internal != nil {
-			// ce.e.Logger.Errorf("internal err: %+v", e.Internal)
-			httpErr.Internal = e.Internal
+			ce.e.Logger.Errorf("internal err: %+v", e.Internal)
+			// httpErr.Internal = e.Internal
 		}
 
 	case *echo.HTTPError:
@@ -135,8 +141,8 @@ func (ce *ErrorHandler) Handle(err error, c echo.Context) {
 			httpErr.Message = fmt.Sprintf("%+v", em)
 		}
 		if e.Internal != nil {
-			// ce.e.Logger.Errorf("internal err: %+v", e.Internal)
-			httpErr.Internal = e.Internal
+			ce.e.Logger.Errorf("internal err: %+v", e.Internal)
+			// httpErr.Internal = e.Internal
 		}
 
 	case validator.ValidationErrors:

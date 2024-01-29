@@ -1,12 +1,15 @@
 //go:build swagger
 
-// Rúnar Himmel is an enchanting Golang project inspired by Norse mythology
+// Gram - The sword is only as powerful as the person wielding it.
 //
-// API documents for Rúnar Himmel.
+// `Inspired by the legendary Norse sword Gram, this Golang project wields the power
+// of simplicity and precision. A versatile tool for crafting robust and efficient
+// applications with mythical coding prowess.`
 //
 // ## Authentication
 // All API endpoints with the lock icon require authentication token.
 // Firstly, grab the **access_token** from the response of `/auth/login`. Then include this header in all API calls:
+//
 // ```
 // Authorization: Bearer ${access_token}
 // ```
@@ -14,7 +17,7 @@
 // Terms Of Service: N/A
 //
 // Version: %{VERSION}
-// Contact: m15t <nguyen.ndk@outlook.com>
+// Contact: m15t <khanhnguyen1411@gmail.com>
 //
 // Consumes:
 // - application/json

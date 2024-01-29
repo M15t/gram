@@ -7,8 +7,8 @@ import (
 
 	"github.com/imdatngo/gowhere"
 
-	"runar-himmel/config"
-	dbutil "runar-himmel/pkg/util/db"
+	"gram/config"
+	dbutil "gram/pkg/util/db"
 
 	// _ "gorm.io/driver/sqlite" // DB adapter
 	// _ "gorm.io/gorm/dialects/postgres" // DB adapter

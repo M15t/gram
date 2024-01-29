@@ -2,8 +2,10 @@ package repoutil
 
 import (
 	"context"
+	requestutil "gram/pkg/util/request"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 // NewRepo creates new Repo instance
@@ -26,18 +28,28 @@ func (d *Repo[T]) CreateInBatches(ctx context.Context, input []T, batchSize int)
 	return d.GDB.WithContext(ctx).CreateInBatches(input, batchSize).Error
 }
 
-// Read get a record by primary key
+// Read get a record by conds
 func (d *Repo[T]) Read(ctx context.Context, output *T, conds ...any) error {
 	return d.GDB.WithContext(ctx).First(output, parseConds(conds)...).Error
 }
 
 // ReadByID gets a record by primary key
 func (d *Repo[T]) ReadByID(ctx context.Context, output *T, id string) error {
-	return d.GDB.WithContext(ctx).Take(output, `id = ?`, id).Error
+	return d.GDB.WithContext(ctx).Where(`id = ?`, id).Take(output).Error
 }
 
-// ReadAll gets all records that match given conditions
-func (d *Repo[T]) ReadAll(ctx context.Context, output *[]T, conds ...any) error {
+// ReadByUpdate gets a record and lock it for update
+func (d *Repo[T]) ReadByUpdate(ctx context.Context, options string, output *T, conds ...any) error {
+	db := d.GDB.WithContext(ctx).Clauses(clause.Locking{
+		Strength: "UPDATE",
+		Options:  options, // "NOWAIT" or "SKIP LOCKED" (PostgreSQL only)
+	})
+
+	return db.Take(output, parseConds(conds)...).Error
+}
+
+// List gets all records that match given conditions
+func (d *Repo[T]) List(ctx context.Context, output interface{}, conds ...any) error {
 	return d.GDB.WithContext(ctx).Find(output, parseConds(conds)...).Error
 }
 
@@ -67,8 +79,8 @@ func (d *Repo[T]) Count(ctx context.Context, count *int64, conds ...any) error {
 	return db.Count(count).Error
 }
 
-// Exist checks if a record exists by conditions
-func (d *Repo[T]) Exist(ctx context.Context, conds ...any) (bool, error) {
+// Existed checks if a record exists by conditions
+func (d *Repo[T]) Existed(ctx context.Context, conds ...any) (bool, error) {
 	var count int64
 	if err := d.Count(ctx, &count, conds...); err != nil {
 		return false, err
@@ -77,7 +89,7 @@ func (d *Repo[T]) Exist(ctx context.Context, conds ...any) (bool, error) {
 }
 
 // ReadAllByCondition retrieves a list of entities based on the provided query conditions.
-func (d *Repo[T]) ReadAllByCondition(ctx context.Context, output []*T, count *int64, lqc *ListQueryCondition) error {
+func (d *Repo[T]) ReadAllByCondition(ctx context.Context, output interface{}, count *int64, lqc *requestutil.ListQueryCondition) error {
 	db := d.GDB.WithContext(ctx)
 
 	if lqc != nil {
@@ -92,7 +104,7 @@ func (d *Repo[T]) ReadAllByCondition(ctx context.Context, output []*T, count *in
 		db = withSorting(db, lqc.Sort, d.quoteCol)
 
 		// Retrieve data
-		if err := db.Find(&output).Error; err != nil {
+		if err := db.Find(output).Error; err != nil {
 			return err
 		}
 	}

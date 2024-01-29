@@ -2,15 +2,15 @@ package main
 
 import (
 	"fmt"
+	"gram/config"
+	"gram/internal/db"
+	"gram/internal/types"
+	"gram/pkg/util/crypter"
+	"gram/pkg/util/migration"
 	"log"
-	"runar-himmel/config"
-	"runar-himmel/internal/db"
-	"runar-himmel/internal/types"
-	"runar-himmel/pkg/util/crypter"
-	"runar-himmel/pkg/util/migration"
 	"time"
 
-	"runar-himmel/internal/rbac"
+	"gram/internal/rbac"
 
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/go-gormigrate/gormigrate/v2"
@@ -97,7 +97,7 @@ func Run() (respErr error) {
 				now := time.Now()
 				defaultUsers := []*types.User{
 					{
-						Email:           "odin@runar-himmel.sky",
+						Email:           "odin@gram.sky",
 						EmailVerifiedAt: &now,
 						Phone:           "+6281234567890",
 						PhoneVerifiedAt: &now,
@@ -106,7 +106,7 @@ func Run() (respErr error) {
 						Role:            rbac.RoleSuperAdmin,
 					},
 					{
-						Email:           "thor@runar-himmel.sky",
+						Email:           "thor@gram.sky",
 						EmailVerifiedAt: &now,
 						Phone:           "+6281234567891",
 						PhoneVerifiedAt: &now,
@@ -115,13 +115,13 @@ func Run() (respErr error) {
 						Role:            rbac.RoleAdmin,
 					},
 					{
-						Email:           "loki@runar-himmel.sky",
+						Email:           "loki@gram.sky",
 						EmailVerifiedAt: &now,
 						Phone:           "+6281234567892",
 						PhoneVerifiedAt: &now,
 						FirstName:       "Loki",
 						LastName:        "Laufeyjarson",
-						Role:            rbac.RoleCustomer,
+						Role:            rbac.RoleUser,
 					},
 				}
 				for _, usr := range defaultUsers {
@@ -138,6 +138,32 @@ func Run() (respErr error) {
 			},
 			Rollback: func(tx *gorm.DB) error {
 				return tx.Migrator().DropTable("users")
+			},
+		},
+		// create "sessions" table
+		{
+			ID: "202312211623",
+			Migrate: func(tx *gorm.DB) error {
+				if err := tx.Set("gorm:table_options", defaultTableOpts).AutoMigrate(&types.Session{}); err != nil {
+					return err
+				}
+				return nil
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Migrator().DropTable("sessions")
+			},
+		},
+		// create "memos" table
+		{
+			ID: "202401051324",
+			Migrate: func(tx *gorm.DB) error {
+				if err := tx.Set("gorm:table_options", defaultTableOpts).AutoMigrate(&types.Memo{}); err != nil {
+					return err
+				}
+				return nil
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Migrator().DropTable("memos")
 			},
 		},
 	})

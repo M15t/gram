@@ -1,8 +1,8 @@
 package auth
 
 import (
-	"runar-himmel/internal/repo"
-	"runar-himmel/pkg/server/middleware/jwt"
+	"gram/internal/repo"
+	"gram/pkg/server/middleware/jwt"
 
 	gjwt "github.com/golang-jwt/jwt/v5"
 )
@@ -25,8 +25,8 @@ type Auth struct {
 
 // JWT represents token generator (jwt) interface
 type JWT interface {
-	GenerateToken(input *jwt.TokenInput, output *jwt.TokenOutput) error
-	ParseToken(input string) (*gjwt.Token, error)
+	GenerateToken(*jwt.TokenInput, *jwt.TokenOutput) error
+	ParseToken(string) (*gjwt.Token, error)
 }
 
 // Crypter represents security interface

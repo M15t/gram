@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"strings"
 	"syscall"
 	"time"
@@ -16,7 +17,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
 
-	"runar-himmel/pkg/server/middleware/secure"
+	"gram/pkg/server/middleware/secure"
 
 	echoadapter "github.com/awslabs/aws-lambda-go-api-proxy/echo"
 )
@@ -96,7 +97,7 @@ func New(cfg *Config) *echo.Echo {
 	e.HTTPErrorHandler = NewErrorHandler(e).Handle
 	e.Binder = NewBinder()
 	e.Debug = cfg.Debug
-	e.Server.Addr = fmt.Sprintf(":%d", cfg.Port)
+	e.Server.Addr = ":" + strconv.Itoa(cfg.Port)
 	e.Server.ReadHeaderTimeout = time.Duration(cfg.ReadHeaderTimeout) * time.Second
 	e.Server.ReadTimeout = time.Duration(cfg.ReadTimeout) * time.Second
 	e.Server.WriteTimeout = time.Duration(cfg.WriteTimeout) * time.Second

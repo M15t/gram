@@ -7,8 +7,8 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/samber/lo"
 
-	"runar-himmel/internal/types"
-	"runar-himmel/pkg/server"
+	"gram/internal/types"
+	"gram/pkg/server"
 )
 
 // HTTP represents auth http service
@@ -28,12 +28,12 @@ func NewHTTP(svc Service, eg *echo.Group) {
 
 	// swagger:operation POST /auth/login auth authLogin
 	// ---
-	// summary: Logs in user by email and password
+	// summary: Logs in user by email, password and grant_type
 	// security: []
 	// parameters:
 	// - name: request
 	//   in: body
-	//   description: Request body
+	//   description: Request body. `grant_type` should be `app` or `portal`
 	//   required: true
 	//   schema:
 	//     "$ref": "#/definitions/Credentials"
@@ -50,18 +50,18 @@ func NewHTTP(svc Service, eg *echo.Group) {
 
 	// swagger:operation POST /auth/refresh-token auth authRefreshToken
 	// ---
-	// summary: Refresh access token
+	// summary: Refresh access token.
 	// security: []
 	// parameters:
 	// - name: token
 	//   in: body
-	//   description: The given `refresh_token` when login
+	//   description: The given `refresh_token` when login.
 	//   required: true
 	//   schema:
 	//     "$ref": "#/definitions/RefreshTokenData"
 	// responses:
 	//   "200":
-	//     description: New access token
+	//     description: New access token. The new `refresh_token` will be returned only if the `access_token` is expired
 	//     schema:
 	//       "$ref": "#/definitions/AuthToken"
 	//   default:

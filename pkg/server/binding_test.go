@@ -2,9 +2,9 @@ package server_test
 
 import (
 	"bytes"
+	"gram/pkg/server"
 	"net/http"
 	"net/http/httptest"
-	"runar-himmel/pkg/server"
 	"testing"
 
 	"github.com/go-playground/validator/v10"

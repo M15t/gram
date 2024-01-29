@@ -16,13 +16,15 @@ provision: depends ## Provision dev environment
 	sh scripts/waitdb.sh
 	@$(MAKE) migrate specs
 
-start: ## Bring up the server on dev environment
-	docker-compose up -d
+start: docker.up ## Bring up the server on dev environment
 	sh scripts/waitdb.sh
 	air
 
-remove.docker: ## Bring down the server on dev environment, remove all docker related stuffs as well
+docker.down: ## Bring down the server on dev environment, remove all docker related stuffs as well
 	docker-compose down -v --remove-orphans
+
+docker.up: ## Bring up the docker container
+	docker-compose up -d
 
 migrate: ## Run database migrations
 	go run functions/migration/main.go
