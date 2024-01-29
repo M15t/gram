@@ -1,4 +1,4 @@
-# [Gram] The sword is only as powerful as the person wielding it.
+# GRAM
 
 Inspired by the legendary Norse sword Gram, this Golang project wields the power
 of simplicity and precision. A versatile tool for crafting robust and efficient
