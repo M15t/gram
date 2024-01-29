@@ -1,9 +1,9 @@
 package user
 
 import (
-	"himin-runar/internal/repo"
-	"himin-runar/internal/types"
-	requestutil "himin-runar/pkg/util/request"
+	"gram/internal/repo"
+	"gram/internal/types"
+	requestutil "gram/pkg/util/request"
 )
 
 // CreateUserReq contains request data to create new user

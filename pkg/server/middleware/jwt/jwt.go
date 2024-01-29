@@ -2,7 +2,7 @@ package jwt
 
 import (
 	"fmt"
-	"himin-runar/pkg/server"
+	"gram/pkg/server"
 	"net/http"
 	"strings"
 	"time"

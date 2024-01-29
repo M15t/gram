@@ -1,13 +1,13 @@
 package user
 
 import (
-	"himin-runar/internal/rbac"
-	"himin-runar/internal/types"
-	"himin-runar/pkg/server"
+	"gram/internal/rbac"
+	"gram/internal/types"
+	"gram/pkg/server"
 
-	contextutil "himin-runar/internal/api/context"
+	contextutil "gram/internal/api/context"
 
-	structutil "himin-runar/pkg/util/struct"
+	structutil "gram/pkg/util/struct"
 )
 
 // Create creates new user

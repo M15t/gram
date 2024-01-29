@@ -2,7 +2,7 @@ package contextutil
 
 import (
 	"context"
-	"himin-runar/internal/types"
+	"gram/internal/types"
 )
 
 // AuthUser returns authenticated user info

@@ -2,15 +2,15 @@ package main
 
 import (
 	"fmt"
-	"himin-runar/config"
-	"himin-runar/internal/db"
-	"himin-runar/internal/types"
-	"himin-runar/pkg/util/crypter"
-	"himin-runar/pkg/util/migration"
+	"gram/config"
+	"gram/internal/db"
+	"gram/internal/types"
+	"gram/pkg/util/crypter"
+	"gram/pkg/util/migration"
 	"log"
 	"time"
 
-	"himin-runar/internal/rbac"
+	"gram/internal/rbac"
 
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/go-gormigrate/gormigrate/v2"
@@ -97,7 +97,7 @@ func Run() (respErr error) {
 				now := time.Now()
 				defaultUsers := []*types.User{
 					{
-						Email:           "odin@himin-runar.sky",
+						Email:           "odin@gram.sky",
 						EmailVerifiedAt: &now,
 						Phone:           "+6281234567890",
 						PhoneVerifiedAt: &now,
@@ -106,7 +106,7 @@ func Run() (respErr error) {
 						Role:            rbac.RoleSuperAdmin,
 					},
 					{
-						Email:           "thor@himin-runar.sky",
+						Email:           "thor@gram.sky",
 						EmailVerifiedAt: &now,
 						Phone:           "+6281234567891",
 						PhoneVerifiedAt: &now,
@@ -115,7 +115,7 @@ func Run() (respErr error) {
 						Role:            rbac.RoleAdmin,
 					},
 					{
-						Email:           "loki@himin-runar.sky",
+						Email:           "loki@gram.sky",
 						EmailVerifiedAt: &now,
 						Phone:           "+6281234567892",
 						PhoneVerifiedAt: &now,

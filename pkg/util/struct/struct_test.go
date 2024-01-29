@@ -1,7 +1,7 @@
 package structutil_test
 
 import (
-	structutil "himin-runar/pkg/util/struct"
+	structutil "gram/pkg/util/struct"
 	"reflect"
 	"testing"
 )

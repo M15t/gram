@@ -1,14 +1,14 @@
 package memo
 
 import (
-	"himin-runar/internal/types"
-	httputil "himin-runar/pkg/util/http"
+	"gram/internal/types"
+	httputil "gram/pkg/util/http"
 	"net/http"
 	"strings"
 
 	"github.com/labstack/echo/v4"
 
-	contextutil "himin-runar/internal/api/context"
+	contextutil "gram/internal/api/context"
 )
 
 // HTTP represents memo http service

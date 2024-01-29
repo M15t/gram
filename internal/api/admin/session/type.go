@@ -1,8 +1,8 @@
 package session
 
 import (
-	"himin-runar/internal/types"
-	requestutil "himin-runar/pkg/util/request"
+	"gram/internal/types"
+	requestutil "gram/pkg/util/request"
 )
 
 // UpdateSessionReq contains request data to update existing session

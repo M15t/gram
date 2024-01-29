@@ -2,8 +2,8 @@ package auth
 
 import (
 	"database/sql"
-	"himin-runar/internal/rbac"
-	"himin-runar/internal/types"
+	"gram/internal/rbac"
+	"gram/internal/types"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"

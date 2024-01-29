@@ -2,7 +2,7 @@ package dbutil
 
 import (
 	"fmt"
-	"himin-runar/config"
+	"gram/config"
 	"net/url"
 
 	"gorm.io/driver/mysql"

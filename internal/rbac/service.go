@@ -1,7 +1,7 @@
 package rbac
 
 import (
-	"himin-runar/pkg/rbac"
+	"gram/pkg/rbac"
 )
 
 // New returns new RBAC service

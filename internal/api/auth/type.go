@@ -1,11 +1,11 @@
 package auth
 
-import "himin-runar/internal/types"
+import "gram/internal/types"
 
 // Credentials represents login request data
 // swagger:model
 type Credentials struct {
-	// example: loki@himin-runar.sky
+	// example: loki@gram.sky
 	Email string `json:"email" form:"email" validate:"required_without=Username"`
 	// example: user123!@#
 	Password string `json:"password" form:"password" validate:"required"`

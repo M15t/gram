@@ -3,7 +3,7 @@ package server_test
 import (
 	"testing"
 
-	"himin-runar/pkg/server"
+	"gram/pkg/server"
 )
 
 // Improve tests

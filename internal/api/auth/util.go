@@ -2,9 +2,9 @@ package auth
 
 import (
 	"database/sql"
-	"himin-runar/internal/types"
-	"himin-runar/pkg/server/middleware/jwt"
-	"himin-runar/pkg/util/ulidutil"
+	"gram/internal/types"
+	"gram/pkg/server/middleware/jwt"
+	"gram/pkg/util/ulidutil"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -18,6 +18,7 @@ func (s *Auth) authenticate(c echo.Context, ai *AuthenticateInput) (*types.AuthT
 	sessionID := ulidutil.NewString()
 	accessTokenOutput := jwt.TokenOutput{}
 	refreshTokenOutput := jwt.TokenOutput{}
+	// * generate access token
 	if err := s.jwt.GenerateToken(&jwt.TokenInput{
 		Type: jwt.TypeTokenAccess,
 		Claims: map[string]interface{}{
@@ -30,21 +31,19 @@ func (s *Auth) authenticate(c echo.Context, ai *AuthenticateInput) (*types.AuthT
 		return nil, err
 	}
 
-	updates := map[string]interface{}{
-		"last_login": time.Now(),
+	// * generate refresh token
+	if err := s.jwt.GenerateToken(&jwt.TokenInput{
+		Type: jwt.TypeTokenRefresh,
+		Claims: map[string]interface{}{
+			"id":  sessionID,
+			"uid": ai.User.ID,
+		},
+	}, &refreshTokenOutput); err != nil {
+		return nil, err
 	}
-	if ai.IsLogin {
-		if err := s.jwt.GenerateToken(&jwt.TokenInput{
-			Type: jwt.TypeTokenRefresh,
-			Claims: map[string]interface{}{
-				"id":  sessionID,
-				"uid": ai.User.ID,
-			},
-		}, &refreshTokenOutput); err != nil {
-			return nil, err
-		}
 
-		// create session
+	if ai.IsLogin {
+		// * create session
 		if err := s.repo.Session.Create(ctx, &types.Session{
 			ID:        sessionID,
 			UserID:    ai.User.ID,
@@ -60,8 +59,20 @@ func (s *Auth) authenticate(c echo.Context, ai *AuthenticateInput) (*types.AuthT
 		}
 	}
 
-	// update last_login and refresh_token
-	if err := s.repo.User.Update(ctx, updates, ai.User.ID); err != nil {
+	// * update last_login
+	if err := s.repo.User.Update(ctx, map[string]interface{}{
+		"last_login": time.Now(),
+	}, ai.User.ID); err != nil {
+		return nil, err
+	}
+
+	// * update refresh_token
+	if err := s.repo.Session.Update(ctx, map[string]interface{}{
+		"refresh_token": sql.NullString{
+			String: refreshTokenOutput.Token,
+			Valid:  true,
+		},
+	}, sessionID); err != nil {
 		return nil, err
 	}
 

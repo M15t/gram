@@ -3,7 +3,7 @@ package rbac
 import (
 	"net/http"
 
-	"himin-runar/pkg/server"
+	"gram/pkg/server"
 )
 
 // consts for RBAC

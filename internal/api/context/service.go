@@ -2,7 +2,7 @@ package contextutil
 
 import (
 	"context"
-	"himin-runar/internal/types"
+	"gram/internal/types"
 
 	"github.com/labstack/echo/v4"
 )

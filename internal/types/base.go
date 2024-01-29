@@ -1,7 +1,7 @@
 package types
 
 import (
-	"himin-runar/pkg/util/ulidutil"
+	"gram/pkg/util/ulidutil"
 	"time"
 
 	"gorm.io/gorm"

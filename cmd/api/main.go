@@ -2,22 +2,22 @@ package main
 
 import (
 	"embed"
-	"himin-runar/config"
-	"himin-runar/internal/api/admin/memo"
-	"himin-runar/internal/api/admin/session"
-	"himin-runar/internal/api/admin/user"
-	"himin-runar/internal/api/auth"
-	"himin-runar/internal/api/root"
-	"himin-runar/internal/db"
-	"himin-runar/internal/rbac"
-	"himin-runar/internal/repo"
+	"gram/config"
+	"gram/internal/api/admin/memo"
+	"gram/internal/api/admin/session"
+	"gram/internal/api/admin/user"
+	"gram/internal/api/auth"
+	"gram/internal/api/root"
+	"gram/internal/db"
+	"gram/internal/rbac"
+	"gram/internal/repo"
 
-	"himin-runar/pkg/server"
-	"himin-runar/pkg/server/middleware/jwt"
-	"himin-runar/pkg/server/middleware/secure"
-	"himin-runar/pkg/util/crypter"
+	"gram/pkg/server"
+	"gram/pkg/server/middleware/jwt"
+	"gram/pkg/server/middleware/secure"
+	"gram/pkg/util/crypter"
 
-	contextutil "himin-runar/internal/api/context"
+	contextutil "gram/internal/api/context"
 
 	"github.com/labstack/echo/v4"
 )

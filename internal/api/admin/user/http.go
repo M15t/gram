@@ -1,17 +1,17 @@
 package user
 
 import (
-	"himin-runar/internal/rbac"
-	"himin-runar/internal/types"
-	"himin-runar/pkg/server"
-	httputil "himin-runar/pkg/util/http"
+	"gram/internal/rbac"
+	"gram/internal/types"
+	"gram/pkg/server"
+	httputil "gram/pkg/util/http"
 	"net/http"
 	"strings"
 
 	"github.com/labstack/echo/v4"
 	"github.com/samber/lo"
 
-	contextutil "himin-runar/internal/api/context"
+	contextutil "gram/internal/api/context"
 )
 
 // HTTP represents user http service

@@ -3,9 +3,9 @@ package repo
 import (
 	"context"
 	"fmt"
-	"himin-runar/internal/types"
+	"gram/internal/types"
 
-	repoutil "himin-runar/pkg/util/repo"
+	repoutil "gram/pkg/util/repo"
 
 	"gorm.io/gorm"
 )

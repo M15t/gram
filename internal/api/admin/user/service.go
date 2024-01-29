@@ -1,8 +1,8 @@
 package user
 
 import (
-	"himin-runar/internal/repo"
-	"himin-runar/pkg/rbac"
+	"gram/internal/repo"
+	"gram/pkg/rbac"
 )
 
 // New creates new user application service

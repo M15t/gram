@@ -1,7 +1,7 @@
 package session
 
 import (
-	"himin-runar/pkg/server"
+	"gram/pkg/server"
 	"net/http"
 )
 

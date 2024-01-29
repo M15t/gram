@@ -2,7 +2,7 @@ package server_test
 
 import (
 	"bytes"
-	"himin-runar/pkg/server"
+	"gram/pkg/server"
 	"net/http"
 	"net/http/httptest"
 	"testing"

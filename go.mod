@@ -1,4 +1,4 @@
-module himin-runar
+module gram
 
 go 1.21.5
 

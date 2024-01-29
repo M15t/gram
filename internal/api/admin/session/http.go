@@ -1,9 +1,9 @@
 package session
 
 import (
-	contextutil "himin-runar/internal/api/context"
-	"himin-runar/internal/types"
-	httputil "himin-runar/pkg/util/http"
+	contextutil "gram/internal/api/context"
+	"gram/internal/types"
+	httputil "gram/pkg/util/http"
 	"net/http"
 
 	"github.com/labstack/echo/v4"

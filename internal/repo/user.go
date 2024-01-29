@@ -2,11 +2,11 @@ package repo
 
 import (
 	"context"
-	"himin-runar/internal/types"
+	"gram/internal/types"
 	"strings"
 
-	repoutil "himin-runar/pkg/util/repo"
-	requestutil "himin-runar/pkg/util/request"
+	repoutil "gram/pkg/util/repo"
+	requestutil "gram/pkg/util/request"
 
 	"gorm.io/gorm"
 )

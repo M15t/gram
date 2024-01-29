@@ -1,8 +1,8 @@
 package memo
 
 import (
-	"himin-runar/internal/types"
-	requestutil "himin-runar/pkg/util/request"
+	"gram/internal/types"
+	requestutil "gram/pkg/util/request"
 )
 
 // CreateMemoReq contains request data to create new memo

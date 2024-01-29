@@ -9,7 +9,7 @@ import (
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 
-	"himin-runar/pkg/rbac/casbinadapter"
+	"gram/pkg/rbac/casbinadapter"
 )
 
 func testGetPolicy(t *testing.T, e *casbin.Enforcer, res [][]string) {
