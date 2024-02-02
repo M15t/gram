@@ -1,7 +1,7 @@
 package rbac
 
 import (
-	"gram/pkg/rbac"
+	"github.com/M15t/gram/pkg/rbac"
 )
 
 // New returns new RBAC service

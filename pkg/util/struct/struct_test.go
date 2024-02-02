@@ -1,9 +1,10 @@
 package structutil_test
 
 import (
-	structutil "gram/pkg/util/struct"
 	"reflect"
 	"testing"
+
+	structutil "github.com/M15t/gram/pkg/util/struct"
 )
 
 func strPtr(s string) *string {

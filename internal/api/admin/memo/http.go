@@ -1,14 +1,15 @@
 package memo
 
 import (
-	"gram/internal/types"
-	httputil "gram/pkg/util/http"
 	"net/http"
 	"strings"
 
+	"github.com/M15t/gram/internal/types"
+	httputil "github.com/M15t/gram/pkg/util/http"
+
 	"github.com/labstack/echo/v4"
 
-	contextutil "gram/internal/api/context"
+	contextutil "github.com/M15t/gram/internal/api/context"
 )
 
 // HTTP represents memo http service

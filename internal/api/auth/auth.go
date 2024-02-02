@@ -2,9 +2,10 @@ package auth
 
 import (
 	"database/sql"
-	"gram/internal/rbac"
-	"gram/internal/types"
 	"time"
+
+	"github.com/M15t/gram/internal/rbac"
+	"github.com/M15t/gram/internal/types"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"

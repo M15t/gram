@@ -1,8 +1,8 @@
 package memo
 
 import (
-	"gram/internal/types"
-	requestutil "gram/pkg/util/request"
+	"github.com/M15t/gram/internal/types"
+	requestutil "github.com/M15t/gram/pkg/util/request"
 )
 
 // CreateMemoReq contains request data to create new memo

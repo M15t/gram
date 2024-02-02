@@ -8,8 +8,8 @@ import (
 	"github.com/casbin/casbin/persist"
 	"gorm.io/gorm"
 
-	"gram/pkg/rbac/casbinadapter"
-	"gram/pkg/server"
+	"github.com/M15t/gram/pkg/rbac/casbinadapter"
+	"github.com/M15t/gram/pkg/server"
 )
 
 // Custom errors

@@ -2,8 +2,9 @@ package dbutil
 
 import (
 	"fmt"
-	"gram/config"
 	"net/url"
+
+	"github.com/M15t/gram/config"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"

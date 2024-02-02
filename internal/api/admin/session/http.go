@@ -1,10 +1,11 @@
 package session
 
 import (
-	contextutil "gram/internal/api/context"
-	"gram/internal/types"
-	httputil "gram/pkg/util/http"
 	"net/http"
+
+	contextutil "github.com/M15t/gram/internal/api/context"
+	"github.com/M15t/gram/internal/types"
+	httputil "github.com/M15t/gram/pkg/util/http"
 
 	"github.com/labstack/echo/v4"
 )

@@ -1,8 +1,9 @@
 package types
 
 import (
-	"gram/pkg/util/ulidutil"
 	"time"
+
+	"github.com/M15t/gram/pkg/util/ulidutil"
 
 	"gorm.io/gorm"
 )

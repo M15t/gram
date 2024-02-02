@@ -2,11 +2,12 @@ package repo
 
 import (
 	"context"
-	"gram/internal/types"
 	"strings"
 
-	repoutil "gram/pkg/util/repo"
-	requestutil "gram/pkg/util/request"
+	"github.com/M15t/gram/internal/types"
+
+	repoutil "github.com/M15t/gram/pkg/util/repo"
+	requestutil "github.com/M15t/gram/pkg/util/request"
 
 	"gorm.io/gorm"
 )

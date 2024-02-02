@@ -3,7 +3,7 @@ package rbac
 import (
 	"net/http"
 
-	"gram/pkg/server"
+	"github.com/M15t/gram/pkg/server"
 )
 
 // consts for RBAC

@@ -1,17 +1,18 @@
 package user
 
 import (
-	"gram/internal/rbac"
-	"gram/internal/types"
-	"gram/pkg/server"
-	httputil "gram/pkg/util/http"
 	"net/http"
 	"strings"
+
+	"github.com/M15t/gram/internal/rbac"
+	"github.com/M15t/gram/internal/types"
+	"github.com/M15t/gram/pkg/server"
+	httputil "github.com/M15t/gram/pkg/util/http"
 
 	"github.com/labstack/echo/v4"
 	"github.com/samber/lo"
 
-	contextutil "gram/internal/api/context"
+	contextutil "github.com/M15t/gram/internal/api/context"
 )
 
 // HTTP represents user http service

@@ -2,10 +2,11 @@ package jwt
 
 import (
 	"fmt"
-	"gram/pkg/server"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/M15t/gram/pkg/server"
 
 	jwt "github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"

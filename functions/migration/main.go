@@ -2,15 +2,16 @@ package main
 
 import (
 	"fmt"
-	"gram/config"
-	"gram/internal/db"
-	"gram/internal/types"
-	"gram/pkg/util/crypter"
-	"gram/pkg/util/migration"
 	"log"
 	"time"
 
-	"gram/internal/rbac"
+	"github.com/M15t/gram/config"
+	"github.com/M15t/gram/internal/db"
+	"github.com/M15t/gram/internal/types"
+	"github.com/M15t/gram/pkg/util/crypter"
+	"github.com/M15t/gram/pkg/util/migration"
+
+	"github.com/M15t/gram/internal/rbac"
 
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/go-gormigrate/gormigrate/v2"

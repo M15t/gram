@@ -7,8 +7,8 @@ import (
 
 	"github.com/imdatngo/gowhere"
 
-	"gram/config"
-	dbutil "gram/pkg/util/db"
+	"github.com/M15t/gram/config"
+	dbutil "github.com/M15t/gram/pkg/util/db"
 
 	// _ "gorm.io/driver/sqlite" // DB adapter
 	// _ "gorm.io/gorm/dialects/postgres" // DB adapter

@@ -2,7 +2,8 @@ package repoutil
 
 import (
 	"context"
-	requestutil "gram/pkg/util/request"
+
+	requestutil "github.com/M15t/gram/pkg/util/request"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"

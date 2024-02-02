@@ -2,7 +2,8 @@ package contextutil
 
 import (
 	"context"
-	"gram/internal/types"
+
+	"github.com/M15t/gram/internal/types"
 
 	"github.com/labstack/echo/v4"
 )

@@ -1,8 +1,8 @@
 package user
 
 import (
-	"gram/internal/repo"
-	"gram/pkg/rbac"
+	"github.com/M15t/gram/internal/repo"
+	"github.com/M15t/gram/pkg/rbac"
 )
 
 // New creates new user application service

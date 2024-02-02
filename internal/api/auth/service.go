@@ -1,8 +1,8 @@
 package auth
 
 import (
-	"gram/internal/repo"
-	"gram/pkg/server/middleware/jwt"
+	"github.com/M15t/gram/internal/repo"
+	"github.com/M15t/gram/pkg/server/middleware/jwt"
 
 	gjwt "github.com/golang-jwt/jwt/v5"
 )

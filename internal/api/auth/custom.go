@@ -1,8 +1,9 @@
 package auth
 
 import (
-	"gram/pkg/server"
 	"net/http"
+
+	"github.com/M15t/gram/pkg/server"
 )
 
 // Custom errors

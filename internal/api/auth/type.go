@@ -1,6 +1,6 @@
 package auth
 
-import "gram/internal/types"
+import "github.com/M15t/gram/internal/types"
 
 // Credentials represents login request data
 // swagger:model

@@ -1,13 +1,13 @@
 package memo
 
 import (
-	"gram/internal/rbac"
-	"gram/internal/types"
-	"gram/pkg/server"
+	"github.com/M15t/gram/internal/rbac"
+	"github.com/M15t/gram/internal/types"
+	"github.com/M15t/gram/pkg/server"
 
-	contextutil "gram/internal/api/context"
+	contextutil "github.com/M15t/gram/internal/api/context"
 
-	structutil "gram/pkg/util/struct"
+	structutil "github.com/M15t/gram/pkg/util/struct"
 )
 
 // Create creates new memo

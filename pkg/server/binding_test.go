@@ -2,10 +2,11 @@ package server_test
 
 import (
 	"bytes"
-	"gram/pkg/server"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/M15t/gram/pkg/server"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"

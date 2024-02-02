@@ -3,9 +3,10 @@ package repo
 import (
 	"context"
 	"fmt"
-	"gram/internal/types"
 
-	repoutil "gram/pkg/util/repo"
+	"github.com/M15t/gram/internal/types"
+
+	repoutil "github.com/M15t/gram/pkg/util/repo"
 
 	"gorm.io/gorm"
 )

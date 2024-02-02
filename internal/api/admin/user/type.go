@@ -1,9 +1,9 @@
 package user
 
 import (
-	"gram/internal/repo"
-	"gram/internal/types"
-	requestutil "gram/pkg/util/request"
+	"github.com/M15t/gram/internal/repo"
+	"github.com/M15t/gram/internal/types"
+	requestutil "github.com/M15t/gram/pkg/util/request"
 )
 
 // CreateUserReq contains request data to create new user

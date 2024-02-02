@@ -7,8 +7,8 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/samber/lo"
 
-	"gram/internal/types"
-	"gram/pkg/server"
+	"github.com/M15t/gram/internal/types"
+	"github.com/M15t/gram/pkg/server"
 )
 
 // HTTP represents auth http service

@@ -2,10 +2,11 @@ package auth
 
 import (
 	"database/sql"
-	"gram/internal/types"
-	"gram/pkg/server/middleware/jwt"
-	"gram/pkg/util/ulidutil"
 	"time"
+
+	"github.com/M15t/gram/internal/types"
+	"github.com/M15t/gram/pkg/server/middleware/jwt"
+	"github.com/M15t/gram/pkg/util/ulidutil"
 
 	"github.com/labstack/echo/v4"
 )

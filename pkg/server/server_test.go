@@ -3,7 +3,7 @@ package server_test
 import (
 	"testing"
 
-	"gram/pkg/server"
+	"github.com/M15t/gram/pkg/server"
 )
 
 // Improve tests

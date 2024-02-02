@@ -1,4 +1,4 @@
-module gram
+module github.com/M15t/gram
 
 go 1.21.5
 

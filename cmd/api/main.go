@@ -2,22 +2,23 @@ package main
 
 import (
 	"embed"
-	"gram/config"
-	"gram/internal/api/admin/memo"
-	"gram/internal/api/admin/session"
-	"gram/internal/api/admin/user"
-	"gram/internal/api/auth"
-	"gram/internal/api/root"
-	"gram/internal/db"
-	"gram/internal/rbac"
-	"gram/internal/repo"
 
-	"gram/pkg/server"
-	"gram/pkg/server/middleware/jwt"
-	"gram/pkg/server/middleware/secure"
-	"gram/pkg/util/crypter"
+	"github.com/M15t/gram/config"
+	"github.com/M15t/gram/internal/api/admin/memo"
+	"github.com/M15t/gram/internal/api/admin/session"
+	"github.com/M15t/gram/internal/api/admin/user"
+	"github.com/M15t/gram/internal/api/auth"
+	"github.com/M15t/gram/internal/api/root"
+	"github.com/M15t/gram/internal/db"
+	"github.com/M15t/gram/internal/rbac"
+	"github.com/M15t/gram/internal/repo"
 
-	contextutil "gram/internal/api/context"
+	"github.com/M15t/gram/pkg/server"
+	"github.com/M15t/gram/pkg/server/middleware/jwt"
+	"github.com/M15t/gram/pkg/server/middleware/secure"
+	"github.com/M15t/gram/pkg/util/crypter"
+
+	contextutil "github.com/M15t/gram/internal/api/context"
 
 	"github.com/labstack/echo/v4"
 )

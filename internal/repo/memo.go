@@ -1,9 +1,9 @@
 package repo
 
 import (
-	"gram/internal/types"
+	"github.com/M15t/gram/internal/types"
 
-	repoutil "gram/pkg/util/repo"
+	repoutil "github.com/M15t/gram/pkg/util/repo"
 
 	"gorm.io/gorm"
 )
