@@ -28,14 +28,17 @@ gobuild() {
 	rm -rf $buildPath/$svcName
 	go build -trimpath -buildvcs=true $buildTags -ldflags "-s -w" -o $buildPath/$svcName/bootstrap $svcPkg
 
-  # ! in case that we dont setup ssm parameter store :)
-  # ! cp .env and stuff to build folder
-  # cp -r ./.env $buildPath/$svcName/.env
-  # cp -r ./firebase-credentials.json $buildPath/$svcName/firebase-credentials.json
+	# ! in case that we do not setup ssm parameter store cause we're poor :)
+	# ! cp .env and stuff to build folder
+	cp ./.env $buildPath/$svcName
 
-  # # zip files for lambda
-  # shopt -s dotglob # enable the globbing of hidden files
-  zip -j -r $buildPath/$svcName.zip $buildPath/$svcName/*
+	# # zip files for lambda
+	# shopt -s dotglob # enable the globbing of hidden files for bash
+	# shopt -u dotglob # disable the globbing of hidden files for bash
+
+	setopt dotglob # enable the globbing of hidden files for zsh
+	zip -j $buildPath/$svcName.zip $buildPath/$svcName/*
+	setopt no_dotglob # disable the globbing of hidden files for zsh
 }
 
 # Start building

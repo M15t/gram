@@ -39,17 +39,17 @@ func Load(dest interface{}) error {
 func LoadWithOptions(dest interface{}, opts Options) error {
 	envvars := map[string]string{}
 
-	// overwrite with values from .env.local file
-	if !IsLambda() {
-		if err := LoadFromDotenv(envvars, ".env.local"); err != nil {
-			return fmt.Errorf("error preloading dotenv local: %w", err)
-		}
-	}
-
 	// overwrite with values from .env file
 	if opts.DotenvPath != "" {
 		if err := LoadFromDotenv(envvars, opts.DotenvPath); err != nil {
 			return fmt.Errorf("error preloading dotenv: %w", err)
+		}
+	}
+
+	// overwrite with values from .env.local file
+	if !IsLambda() {
+		if err := LoadFromDotenv(envvars, ".env.local"); err != nil {
+			return fmt.Errorf("error preloading dotenv local: %w", err)
 		}
 	}
 

@@ -1,0 +1,116 @@
+service: ${self:custom.appName}-api
+
+frameworkVersion: "3"
+configValidationMode: error
+useDotenv: true
+
+plugins:
+  - serverless-hooks-plugin
+  - serverless-deployment-bucket
+  - serverless-prune-plugin
+
+custom:
+  appName: gram
+  hooks:
+    before:package:initialize:
+      - SWAGGER=${param:enableSwagger} make -C ../../ build.api.lambda specs
+    after:deploy:finalize:
+      - rm -rf .serverless build
+  prune:
+    automatic: true
+    includeLayers: true
+    number: 3
+  env: &commonENV # Common settings or per-environment params
+    AWS_PARAMETER_STORE_PATH: ${param:configPath}
+
+params:
+  default:
+    configPath: ${self:custom.appName}-backend/${opt:stage, 'dev'}
+    resourcePrefix: ${self:service}-${opt:stage, 'dev'}
+    logRetentionInDays: 90
+    enableSwagger: false
+  dev:
+    deploymentBucket: ${self:custom.appName}-artifact-sls
+    enableSwagger: true
+    vpc:
+      securityGroupIds: []
+      subnetIds: []
+    env:
+      <<: *commonENV
+  uat:
+    deploymentBucket: ${self:custom.appName}-artifact-sls
+    enableSwagger: true
+    # domainName:
+    # certificateName:
+    vpc:
+      securityGroupIds: []
+      subnetIds: []
+    env:
+      <<: *commonENV
+  prod:
+    deploymentBucket: ${self:custom.appName}-artifact-sls
+    logRetentionInDays: 365
+    # domainName:
+    # certificateName:
+    vpc:
+      securityGroupIds: []
+      subnetIds: []
+    env:
+      <<: *commonENV
+
+provider:
+  # General service settings
+  name: aws
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'ap-southeast-1'}
+  # https://github.com/serverless/serverless/issues/10815
+  deploymentMethod: direct
+  deploymentBucket:
+    name: ${param:deploymentBucket}
+    blockPublicAccess: true
+  # API Gateway settings
+  httpApi:
+    name: ${param:resourcePrefix}
+    # disableDefaultEndpoint: ${param:enableDomain}
+    metrics: true
+    cors: true
+  apiGateway:
+    shouldStartNameWithService: true
+  # Generate function settings
+  runtime: provided.al2
+  architecture: arm64
+  memorySize: 512
+  timeout: 29 # API Gateway max timeout is 30s
+  logRetentionInDays: ${param:logRetentionInDays}
+  # Load environment variables from AWS Parameter Store or localy defined environment variables
+  environment: ${param:env}
+  vpc: ${param:vpc}
+  # https://www.serverless.com/framework/docs/providers/aws/guide/iam#the-default-iam-role
+  iam:
+    role:
+      name: ${param:resourcePrefix}-lambda-role
+      statements:
+        - Effect: Allow
+          Action:
+            - "kms:Decrypt"
+            - "ssm:GetParameters"
+            - "ssm:GetParametersByPath"
+            - "ses:SendRawEmail"
+          Resource:
+            - "arn:aws:kms:${aws:region}:${aws:accountId}:key/*"
+            - "arn:aws:ssm:${aws:region}:${aws:accountId}:parameter/*"
+            - "arn:aws:ses:${aws:region}:${aws:accountId}:identity/*"
+
+# Package each function individually to avoid unused code, and prevent file name conflict.
+package:
+  individually: true
+
+functions:
+  app:
+    name: ${param:resourcePrefix}-main
+    handler: bootstrap
+    package:
+      artifact: build/main.zip
+    maximumRetryAttempts: 0
+    events:
+      - httpApi: "*"

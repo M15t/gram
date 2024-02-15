@@ -1,0 +1,7 @@
+services:
+  api:
+    path: api
+    region: ap-southeast-1
+  functions:
+    path: functions
+    region: ap-southeast-1

@@ -1,0 +1,106 @@
+service: ${self:custom.appName}-functions
+
+frameworkVersion: "3"
+useDotenv: true
+
+plugins:
+  - serverless-hooks-plugin
+  - serverless-prune-plugin
+  - serverless-deployment-bucket
+custom:
+  appName: gram
+  hooks:
+    before:package:initialize:
+      - make -C ../../ build.funcs.lambda
+    after:deploy:finalize:
+      - rm -rf .serverless build
+  prune:
+    automatic: true
+    includeLayers: true
+    number: 3
+  env: &commonENV # Common settings or per-environment params
+    AWS_PARAMETER_STORE_PATH: ${param:configPath} # Path to config in AWS Parameter Store
+
+params:
+  default:
+    configPath: ${self:custom.appName}-backend/${opt:stage, 'dev'}
+    resourcePrefix: ${self:service}-${opt:stage, 'dev'}
+    logRetentionInDays: 90
+  dev:
+    deploymentBucket: ${self:custom.appName}-artifact-sls
+    vpc:
+      securityGroupIds: []
+      subnetIds: []
+    env:
+      <<: *commonENV
+  uat:
+    deploymentBucket: ${self:custom.appName}-artifact-sls
+    vpc:
+      securityGroupIds: []
+      subnetIds: []
+    env:
+      <<: *commonENV
+  prod:
+    deploymentBucket: ${self:custom.appName}-artifact-sls
+    logRetentionInDays: 365 # 1 year :)
+    vpc:
+      securityGroupIds: []
+      subnetIds: []
+    env:
+      <<: *commonENV
+
+provider:
+  # General service settings
+  name: aws
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'ap-southeast-1'}
+  # https://github.com/serverless/serverless/issues/10815
+  deploymentMethod: direct
+  deploymentBucket:
+    name: ${param:deploymentBucket}
+    blockPublicAccess: true
+  # Generate function settings
+  runtime: provided.al2
+  architecture: arm64
+  memorySize: 256
+  timeout: 300 # optional, in seconds, default is 6
+  logRetentionInDays: ${param:logRetentionInDays}
+  # Load environment variables from AWS Parameter Store
+  environment: ${param:env}
+  vpc: ${param:vpc}
+  iam:
+    role:
+      name: ${param:resourcePrefix}-lambda-role
+      statements:
+        - Effect: Allow
+          Action:
+            - "kms:Decrypt"
+            - "ssm:GetParameters"
+            - "ssm:GetParametersByPath"
+          Resource:
+            - "arn:aws:kms:${aws:region}:${aws:accountId}:key/*"
+            - "arn:aws:ssm:${aws:region}:${aws:accountId}:parameter/*"
+
+package:
+  individually: true
+
+functions:
+  Migration:
+    name: ${param:resourcePrefix}-migration
+    handler: bootstrap
+    package:
+      artifact: build/migration.zip
+      patterns:
+        - "!./**"
+        - .env
+    maximumRetryAttempts: 0
+
+  Seed:
+    name: ${param:resourcePrefix}-seed
+    handler: bootstrap
+    package:
+      artifact: build/seed.zip
+      patterns:
+        - "!./**"
+        - .env
+    maximumRetryAttempts: 0
