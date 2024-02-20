@@ -17,9 +17,19 @@ type User struct {
 	*repoutil.Repo[types.User]
 }
 
+// UserFirebase represents the client for user table with firebase embed
+type UserFirebase struct {
+	*repoutil.Repo[types.UserFirebase]
+}
+
 // NewUser returns a new user database instance
 func NewUser(gdb *gorm.DB) *User {
 	return &User{repoutil.NewRepo[types.User](gdb)}
+}
+
+// NewUserFirebase returns a new user database instance with firebase embed
+func NewUserFirebase(gdb *gorm.DB) *UserFirebase {
+	return &UserFirebase{repoutil.NewRepo[types.UserFirebase](gdb)}
 }
 
 // List reads all users by given conditions

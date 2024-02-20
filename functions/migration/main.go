@@ -90,7 +90,7 @@ func Run() (respErr error) {
 					return err
 				}
 
-				if err := tx.Set("gorm:table_options", defaultTableOpts).AutoMigrate(&types.User{}); err != nil {
+				if err := tx.Set("gorm:table_options", defaultTableOpts).AutoMigrate(&types.User{}, &types.UserFirebase{}); err != nil {
 					return err
 				}
 
@@ -123,6 +123,7 @@ func Run() (respErr error) {
 						FirstName:       "Loki",
 						LastName:        "Laufeyjarson",
 						Role:            rbac.RoleUser,
+						UID:             "xxxxx-xxxxx-xxxxx-xxxxx-xxxxx",
 					},
 				}
 				for _, usr := range defaultUsers {
@@ -138,7 +139,7 @@ func Run() (respErr error) {
 				return nil
 			},
 			Rollback: func(tx *gorm.DB) error {
-				return tx.Migrator().DropTable("users")
+				return tx.Migrator().DropTable("users", "user_firebases")
 			},
 		},
 		// create "sessions" table

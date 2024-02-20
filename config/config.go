@@ -7,6 +7,7 @@ type (
 		Server
 		DB
 		JWT
+		App
 	}
 
 	// General holds general configurations
@@ -51,6 +52,7 @@ type (
 	// App holds app specific configurations
 	App struct {
 		// more app specific configurations
+		FirebaseCredentials string `env:"FIREBASE_CREDENTIALS"`
 	}
 )
 

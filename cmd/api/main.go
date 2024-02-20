@@ -17,6 +17,7 @@ import (
 	"github.com/M15t/gram/pkg/server/middleware/jwt"
 	"github.com/M15t/gram/pkg/server/middleware/secure"
 	"github.com/M15t/gram/pkg/util/crypter"
+	"github.com/M15t/gram/pkg/util/firebase"
 
 	contextutil "github.com/M15t/gram/internal/api/context"
 
@@ -63,9 +64,12 @@ func main() {
 	repoSvc := repo.New(db)
 	rbacSvc := rbac.New(cfg.General.Debug)
 	jwtSvc := jwt.New(cfg.JWT.Algorithm, cfg.JWT.Secret, cfg.JWT.DurationAccessToken, cfg.JWT.DurationRefreshToken)
+	firebaseSvc := firebase.New(&firebase.Config{
+		FirebaseCredentials: cfg.App.FirebaseCredentials,
+	})
 
 	// Initialize services
-	authSvc := auth.New(repoSvc, jwtSvc, crypterSvc)
+	authSvc := auth.New(repoSvc, jwtSvc, crypterSvc, firebaseSvc)
 	sessionSvc := session.New(repoSvc, rbacSvc)
 	userSvc := user.New(repoSvc, rbacSvc, crypterSvc)
 	memoSvc := memo.New(repoSvc, rbacSvc)

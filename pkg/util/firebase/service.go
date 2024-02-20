@@ -2,7 +2,9 @@ package firebase
 
 import (
 	"context"
+	"io"
 	"log"
+	"net/http"
 
 	"cloud.google.com/go/firestore"
 	firebase "firebase.google.com/go/v4"
@@ -12,23 +14,35 @@ import (
 
 // Config represents the configuration
 type Config struct {
-	FirebaseCredentials string
+	FirebaseCredentials string // the path to the firebase credentials JSON file
 }
 
 // Service represents the firebase service
 type Service struct {
 	cfg *Config
-	cr  Crypter
 	ctx context.Context
 	app *firebase.App
-	ac  *auth.Client
+	auc *auth.Client
 	fsc *firestore.Client
 }
 
 // New initializes firebase service with default config
-func New(cfg *Config, cr Crypter) *Service {
+func New(cfg *Config) *Service {
 	// * Initialize Firebase Admin SDK with the fetched credentials
-	opt := option.WithCredentialsJSON([]byte(cfg.FirebaseCredentials))
+	// download the content of the JSON key file from the URL
+	response, err := http.Get(cfg.FirebaseCredentials)
+	if err != nil {
+		log.Printf("Error downloading JSON key: %v\n", err)
+	}
+	defer response.Body.Close()
+
+	// read the content of the response body
+	jsonKey, err := io.ReadAll(response.Body)
+	if err != nil {
+		log.Printf("Error reading JSON key content: %v\n", err)
+	}
+
+	opt := option.WithCredentialsJSON(jsonKey)
 	ctx := context.Background()
 	app, err := firebase.NewApp(ctx, nil, opt)
 	if err != nil {
@@ -36,7 +50,7 @@ func New(cfg *Config, cr Crypter) *Service {
 	}
 
 	// * Initialize Auth client
-	ac, err := app.Auth(ctx)
+	auc, err := app.Auth(ctx)
 	if err != nil {
 		log.Fatalf("error initializing Auth client: %v\n", err)
 	}
@@ -51,17 +65,9 @@ func New(cfg *Config, cr Crypter) *Service {
 
 	return &Service{
 		cfg: cfg,
-		cr:  cr,
 		ctx: ctx,
 		app: app,
-		ac:  ac,
+		auc: auc,
 		fsc: fsc,
 	}
-}
-
-// Crypter represents security and stuff interface
-type Crypter interface {
-	UID() string
-	GetCurrentUnixTime() int64
-	ScheduleToReset() int64
 }

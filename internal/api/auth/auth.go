@@ -2,6 +2,7 @@ package auth
 
 import (
 	"database/sql"
+	"fmt"
 	"time"
 
 	"github.com/M15t/gram/internal/rbac"
@@ -27,6 +28,10 @@ func (s *Auth) Login(c echo.Context, data Credentials) (*types.AuthToken, error)
 	case "app":
 		if existedUser.Role != rbac.RoleUser {
 			return nil, ErrInvalidCredentials
+		}
+
+		if err := s.syncFirebase(c, existedUser); err != nil {
+			return nil, fmt.Errorf("syncFirebase: %w", err)
 		}
 	case "portal":
 		if !lo.Contains([]string{rbac.RoleAdmin, rbac.RoleSuperAdmin}, existedUser.Role) {

@@ -33,7 +33,7 @@ func NewHTTP(svc Service, eg *echo.Group) {
 	// parameters:
 	// - name: request
 	//   in: body
-	//   description: Request body. `grant_type` should be `app` or `portal`
+	//   description: Request body. `grant_type` should be `app` or `portal`. `uid` is optional and should be used only for `app` grant_type
 	//   required: true
 	//   schema:
 	//     "$ref": "#/definitions/Credentials"
@@ -47,6 +47,28 @@ func NewHTTP(svc Service, eg *echo.Group) {
 	//     schema:
 	//       "$ref": "#/definitions/ErrorResponse"
 	eg.POST("/login", h.login)
+
+	// swagger:operation POST /auth/register auth authRegister
+	// ---
+	// summary: Registers new user
+	// security: []
+	// parameters:
+	// - name: request
+	//   in: body
+	//   description: Request body
+	//   required: true
+	//   schema:
+	//     "$ref": "#/definitions/RegisterData"
+	// responses:
+	//   "200":
+	//     description: Access token
+	//     schema:
+	//       "$ref": "#/definitions/AuthToken"
+	//   default:
+	//     description: 'Possible errors: 400, 401, 500'
+	//     schema:
+	//       "$ref": "#/definitions/ErrorResponse"
+	eg.POST("/register", h.register)
 
 	// swagger:operation POST /auth/refresh-token auth authRefreshToken
 	// ---
@@ -93,6 +115,19 @@ func (h *HTTP) login(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, resp)
+}
+
+func (h *HTTP) register(c echo.Context) error {
+	// r := RegisterData{}
+	// if err := c.Bind(&r); err != nil {
+	// 	return err
+	// }
+	// resp, err := h.svc.Register(c, r)
+	// if err != nil {
+	// 	return err
+	// }
+
+	return c.JSON(http.StatusOK, nil)
 }
 
 func (h *HTTP) refreshToken(c echo.Context) error {
