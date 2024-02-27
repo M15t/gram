@@ -4,7 +4,6 @@ import (
 	"embed"
 
 	"github.com/M15t/gram/config"
-	"github.com/M15t/gram/internal/api/admin/memo"
 	"github.com/M15t/gram/internal/api/admin/session"
 	"github.com/M15t/gram/internal/api/admin/user"
 	"github.com/M15t/gram/internal/api/auth"
@@ -72,7 +71,6 @@ func main() {
 	authSvc := auth.New(repoSvc, jwtSvc, crypterSvc, firebaseSvc)
 	sessionSvc := session.New(repoSvc, rbacSvc)
 	userSvc := user.New(repoSvc, rbacSvc, crypterSvc)
-	memoSvc := memo.New(repoSvc, rbacSvc)
 
 	// Initialize root API
 	root.NewHTTP(e)
@@ -84,7 +82,6 @@ func main() {
 	adminRouter.Use(jwtSvc.MWFunc(), contextutil.MWContext())
 	session.NewHTTP(sessionSvc, adminRouter.Group("/sessions"))
 	user.NewHTTP(userSvc, adminRouter.Group("/users"))
-	memo.NewHTTP(memoSvc, adminRouter.Group("/memos"))
 
 	server.Start(e, config.IsLambda())
 }
