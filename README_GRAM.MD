@@ -48,8 +48,9 @@ The application runs as an HTTP server at port 8080. It provides the following A
   - `model` contains domain types for the application. This package only contains simple data types and interfaces for reference
   - `repo` contains repository interfaces and implementations for data models
   - `tools` contains tooling packages
-- `third_party` same ideas as `internal` here above but contains packages to be shareable with other external packages. Other projects will import these libraries expecting them to work, so think twice before you put something here!
-- `scripts` contains scripts to perform various build, install, analysis, etc operations. These scripts keep the root level Makefile small and simple.
+  - `third_party` contains packages of third-party code that integrate with the application. This is also a good place to put test fixtures and other data files.
+  - `pkg` same ideas as `internal` here above but contains packages to be shareable with other external packages. Other projects will import these libraries expecting them to work, so think twice before you put something here!
+  - `scripts` contains scripts to perform various build, install, analysis, etc operations. These scripts keep the root level Makefile small and simple.
 
 ## Getting started
 
@@ -63,21 +64,3 @@ To use GRAM as a starting point of a real project whose package name is somethin
 6. Update the `deploy/**/serverless.yml` files as needed.
 7. Remove the `.git` directory, this file and other files that not being used as well. Init new git repo and push your first commit!
 8. You're all set! Follow the steps in [README.md](README.md) file to initialize the project.
-
-## Implementing CRUD of another table or object
-
-Let's say you have a table named 'cars' that handles user's cars. To implement CRUD on this table you need:
-
-1. Inside `internal/model`, create a new file named `car.go` then put your struct, and struct's methods if needed.
-2. Create a new repository file named `car.go` in the `internal/repo/gormrepo` directory, refer to the other repository implementation.
-   - Remember to run `go generate ./...` to update the UnitOfWork implementation once done.
-3. Inside `internal/api` or specific `internal/api/{service}`, create a new folder named `car`, then create these files inside:
-   - `http.go` contains HTTP handlers and API specs
-   - `service.go` contains the init function and all interfaces that required by this package
-   - `car.go` which named as the package's name, contains all the logic of the package
-   - And order file to seperate the logic if needed
-4. In `cmd/api/main.go`, wire up all the logic, by initializing car repository, services, and passing it to the http service afterwards.
-5. Create a new migration item in `cmd/migration/main.go`, copy the new `Car` struct into it and use `tx.AutoMigrate()` to create the table in database.
-6. Run `make migrate` to apply the change to database.
-7. Run `make specs` to update API specs.
-8. Run `make start` and test your new API at `http://localhost:8080/swagger-ui/`
