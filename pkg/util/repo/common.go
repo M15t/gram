@@ -102,7 +102,7 @@ func (d *Repo[T]) ReadAllByCondition(ctx context.Context, output interface{}, co
 
 		// Apply pagination and sorting
 		db = WithPaging(db, lqc.Page, lqc.PerPage)
-		db = WithSorting(db, lqc.Sort, d.quoteCol)
+		db = WithSorting(db, lqc.Sort, d.QuoteCol)
 
 		// Retrieve data
 		if err := db.Find(output).Error; err != nil {

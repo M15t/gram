@@ -7,7 +7,8 @@ import (
 	"gorm.io/gorm"
 )
 
-func (r *Repo[T]) quoteCol(name string) string {
+// QuoteCol quotes the column name
+func (r *Repo[T]) QuoteCol(name string) string {
 	b := &strings.Builder{}
 	r.GDB.QuoteTo(b, name)
 	return b.String()
