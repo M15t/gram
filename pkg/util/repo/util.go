@@ -13,8 +13,8 @@ func (r *Repo[T]) quoteCol(name string) string {
 	return b.String()
 }
 
-// parseConds returns standard [sqlString, vars] format for query, powered by gowhere package (with default config)
-func parseConds(conds []any) []any {
+// ParseConds returns standard [sqlString, vars] format for query, powered by gowhere package (with default config)
+func ParseConds(conds []any) []any {
 	if len(conds) == 1 {
 		switch c := conds[0].(type) {
 		case string:
@@ -52,8 +52,8 @@ func parseConds(conds []any) []any {
 	return conds
 }
 
-// parseSortValue returns the column name and direction for sorting value like +column or -column
-func parseSortValue(s string) (col, dir string) {
+// ParseSortValue returns the column name and direction for sorting value like +column or -column
+func ParseSortValue(s string) (col, dir string) {
 	col = strings.TrimSpace(s)
 	if col == "" || col == "+" || col == "-" {
 		return "", ""
@@ -72,12 +72,12 @@ func parseSortValue(s string) (col, dir string) {
 	return
 }
 
-// parseSortParam returns list of [column, direction] from comma separated sorting param
-func parseSortParam(s string) [][]string {
+// ParseSortParam returns list of [column, direction] from comma separated sorting param
+func ParseSortParam(s string) [][]string {
 	values := strings.Split(s, ",")
 	l := make([][]string, 0, len(values))
 	for _, v := range values {
-		col, dir := parseSortValue(v)
+		col, dir := ParseSortValue(v)
 		if col != "" {
 			l = append(l, []string{col, dir})
 		}
@@ -85,8 +85,8 @@ func parseSortParam(s string) [][]string {
 	return l
 }
 
-// An util function to set pagination conditions
-func withPaging(db *gorm.DB, page, perPage int) *gorm.DB {
+// WithPaging an util function to set pagination conditions
+func WithPaging(db *gorm.DB, page, perPage int) *gorm.DB {
 	if perPage > 0 {
 		db = db.Limit(perPage)
 		if page > 1 {
@@ -96,11 +96,11 @@ func withPaging(db *gorm.DB, page, perPage int) *gorm.DB {
 	return db
 }
 
-// An util function to set sorting conditions
+// WithSorting an util function to set sorting conditions
 // WARNING: SQL Injection vulnerability! `quoteCol` function must take care of quoting column name properly
-func withSorting(db *gorm.DB, sort string, quoteCol func(name string) string) *gorm.DB {
+func WithSorting(db *gorm.DB, sort string, quoteCol func(name string) string) *gorm.DB {
 	if sort != "" {
-		sp := parseSortParam(sort)
+		sp := ParseSortParam(sort)
 		values := []string{}
 		for _, v := range sp {
 			col := quoteCol(v[0])

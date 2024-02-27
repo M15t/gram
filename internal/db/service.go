@@ -38,7 +38,14 @@ func New(cfg config.DB) (db *gorm.DB, sqldb *sql.DB, err error) {
 
 	// ! EnablePostgreSQL: remove 2 lines above, uncomment the following
 	// db, err := dbutil.New("postgres", dbPsn, enableLog)
-	db, err = dbutil.New("mysql", cfg, &gorm.Config{
+	db, err = dbutil.New("mysql", dbutil.Config{
+		Host:     cfg.Host,
+		Port:     cfg.Port,
+		Username: cfg.Username,
+		Password: cfg.Password,
+		Database: cfg.Database,
+		Params:   cfg.Params,
+	}, &gorm.Config{
 		Logger:                                   lo,
 		AllowGlobalUpdate:                        false,
 		CreateBatchSize:                          1000,

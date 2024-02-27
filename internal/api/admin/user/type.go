@@ -37,7 +37,7 @@ type ChangePasswordReq struct {
 	NewPasswordConfirm string `json:"new_password_confirm" validate:"required,eqfield=NewPassword"`
 }
 
-// ListUserReq contains request data to get list of countries
+// ListUserReq contains request data to get list of users
 // swagger:parameters usersList
 type ListUserReq struct {
 	requestutil.ListQueryRequest

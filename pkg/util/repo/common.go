@@ -31,7 +31,7 @@ func (d *Repo[T]) CreateInBatches(ctx context.Context, input []T, batchSize int)
 
 // Read get a record by conds
 func (d *Repo[T]) Read(ctx context.Context, output *T, conds ...any) error {
-	return d.GDB.WithContext(ctx).First(output, parseConds(conds)...).Error
+	return d.GDB.WithContext(ctx).First(output, ParseConds(conds)...).Error
 }
 
 // ReadByID gets a record by primary key
@@ -46,18 +46,18 @@ func (d *Repo[T]) ReadByUpdate(ctx context.Context, options string, output *T, c
 		Options:  options, // "NOWAIT" or "SKIP LOCKED" (PostgreSQL only)
 	})
 
-	return db.Take(output, parseConds(conds)...).Error
+	return db.Take(output, ParseConds(conds)...).Error
 }
 
 // List gets all records that match given conditions
 func (d *Repo[T]) List(ctx context.Context, output interface{}, conds ...any) error {
-	return d.GDB.WithContext(ctx).Find(output, parseConds(conds)...).Error
+	return d.GDB.WithContext(ctx).Find(output, ParseConds(conds)...).Error
 }
 
 // Update updates a record by conditions
 func (d *Repo[T]) Update(ctx context.Context, updates any, conds ...any) error {
 	db := d.GDB.WithContext(ctx).Model(new(T))
-	conds = parseConds(conds)
+	conds = ParseConds(conds)
 	if len(conds) > 0 {
 		db = db.Where(conds[0], conds[1:]...)
 	}
@@ -67,14 +67,14 @@ func (d *Repo[T]) Update(ctx context.Context, updates any, conds ...any) error {
 
 // Delete deletes a record by conditions
 func (d *Repo[T]) Delete(ctx context.Context, conds ...any) error {
-	return d.GDB.WithContext(ctx).Delete(new(T), parseConds(conds)...).Error
+	return d.GDB.WithContext(ctx).Delete(new(T), ParseConds(conds)...).Error
 }
 
 // Count counts records that match given conditions
 func (d *Repo[T]) Count(ctx context.Context, count *int64, conds ...any) error {
 	db := d.GDB.WithContext(ctx).Model(new(T))
 	if len(conds) > 0 {
-		conds = parseConds(conds)
+		conds = ParseConds(conds)
 		db = db.Where(conds[0], conds[1:]...)
 	}
 	return db.Count(count).Error
@@ -95,14 +95,14 @@ func (d *Repo[T]) ReadAllByCondition(ctx context.Context, output interface{}, co
 
 	if lqc != nil {
 		// Parse and apply filter conditions
-		lqc.Filter = parseConds(lqc.Filter)
+		lqc.Filter = ParseConds(lqc.Filter)
 		if len(lqc.Filter) > 0 {
 			db = d.GDB.Where(lqc.Filter[0], lqc.Filter[1:]...)
 		}
 
 		// Apply pagination and sorting
-		db = withPaging(db, lqc.Page, lqc.PerPage)
-		db = withSorting(db, lqc.Sort, d.quoteCol)
+		db = WithPaging(db, lqc.Page, lqc.PerPage)
+		db = WithSorting(db, lqc.Sort, d.quoteCol)
 
 		// Retrieve data
 		if err := db.Find(output).Error; err != nil {

@@ -11,7 +11,7 @@ type UpdateSessionReq struct {
 	IsBlocked *bool `json:"is_blocked,omitempty"`
 }
 
-// ListSessionReq contains request data to get list of countries
+// ListSessionReq contains request data to get list of sessions
 // swagger:parameters sessionsList
 type ListSessionReq struct {
 	requestutil.ListQueryRequest
