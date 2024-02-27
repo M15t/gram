@@ -8,24 +8,13 @@ type Credentials struct {
 	// example: loki@gram.sky
 	Email string `json:"email" form:"email" validate:"required_without=Username"`
 	// example: user123!@#
-	Password string `json:"password" form:"password"`
+	Password string `json:"password" form:"password" validate:"required"`
 
 	// This is for SwaggerUI authentication which only support `username` field
 	// swagger:ignore
 	Username string `json:"username" form:"username"`
 	// example: app
 	GrantType string `json:"grant_type" form:"grant_type" validate:"required"`
-}
-
-// RegisterData represents register request data
-// swagger:model
-type RegisterData struct {
-	// example:
-	FirstName string `json:"first_name" form:"first_name" validate:"required"`
-	// example:
-	LastName string `json:"last_name" form:"last_name" validate:"required"`
-	// example: user
-	Role string `json:"role" form:"role" validate:"required"`
 }
 
 // RefreshTokenData represents refresh token request data

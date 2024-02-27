@@ -1,10 +1,6 @@
 package types
 
-import (
-	"time"
-
-	"github.com/M15t/gram/pkg/util/firebase"
-)
+import "time"
 
 // cosnt
 const (
@@ -49,12 +45,4 @@ type User struct {
 	EmailVerifiedAt *time.Time `json:"email_verified_at,omitempty" gorm:"type:datetime(3)"`
 
 	Status string `json:"status" gorm:"type:varchar(20);default:active"` // active || blocked || deleted
-
-	UID string `json:"uid" gorm:"type:varchar(36)"` // reflect to firebase UID
-}
-
-// UserFirebase represents the user model with firebase embed
-// swagger:model
-type UserFirebase struct {
-	FirebaseEmbed *firebase.AuthenticatedUserInfo `json:"firebase_embed" gorm:"embedded"`
 }

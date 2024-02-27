@@ -2,7 +2,6 @@ package auth
 
 import (
 	"database/sql"
-	"fmt"
 	"time"
 
 	"github.com/M15t/gram/internal/types"
@@ -86,28 +85,4 @@ func (s *Auth) authenticate(c echo.Context, ai *AuthenticateInput) (*types.AuthT
 		ExpiresIn:    accessTokenOutput.ExpiresIn,
 		RefreshToken: refreshTokenOutput.Token,
 	}, nil
-}
-
-func (s *Auth) syncFirebase(c echo.Context, u *types.User) error {
-	// * get user from firebase
-	userRecord, err := s.fb.GetUser("email", "khanhnguyen1412@gmail.com")
-	if err != nil {
-		return err
-	}
-
-	if userRecord.Disabled {
-		return ErrUserBlocked
-	}
-
-	fmt.Printf("=== %+v\n", userRecord)
-	// * update user firebase
-	// * check if user firebase exists
-	// * if not exists, create new user firebase
-	// * if exists, update user firebase
-
-	// if existed, err := s.repo.UserFirebase.Exist(c.Request().Context(), u.ID); err != nil {
-	// 	return err
-	// } else
-
-	return nil
 }
