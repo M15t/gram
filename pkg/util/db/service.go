@@ -4,16 +4,24 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/M15t/gram/config"
-
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
+// Config is the database configuration
+type Config struct {
+	Host     string
+	Port     int
+	Username string
+	Password string
+	Database string
+	Params   string
+}
+
 // New creates new database connection to the database server
-func New(dialect string, cfg config.DB, gormConfig *gorm.Config) (db *gorm.DB, err error) {
+func New(dialect string, cfg Config, gormConfig *gorm.Config) (db *gorm.DB, err error) {
 	switch dialect {
 	case "mysql":
 		params, err := url.ParseQuery(cfg.Params)
