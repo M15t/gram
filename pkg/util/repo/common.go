@@ -14,6 +14,21 @@ func NewRepo[T any](db *gorm.DB) *Repo[T] {
 	return &Repo[T]{db}
 }
 
+// Intf represents the common interface for all repositories
+type Intf[T any] interface {
+	Create(ctx context.Context, input *T) error
+	CreateInBatches(ctx context.Context, input []T, batchSize int) error
+	Read(ctx context.Context, output *T, conds ...any) error
+	ReadByID(ctx context.Context, output *T, id string) error
+	ReadByUpdate(ctx context.Context, options string, output *T, conds ...any) error
+	List(ctx context.Context, output interface{}, conds ...any) error
+	Update(ctx context.Context, updates any, conds ...any) error
+	Delete(ctx context.Context, conds ...any) error
+	Count(ctx context.Context, count *int64, conds ...any) error
+	Existed(ctx context.Context, conds ...any) (bool, error)
+	ReadAllByCondition(ctx context.Context, output interface{}, count *int64, lqc *requestutil.ListQueryCondition) error
+}
+
 // Repo represents the client for common usages
 type Repo[T any] struct {
 	GDB *gorm.DB

@@ -8,18 +8,20 @@ import (
 	"github.com/imdatngo/gowhere"
 
 	"github.com/M15t/gram/config"
-	dbutil "github.com/M15t/gram/pkg/util/db"
 
 	// _ "gorm.io/driver/sqlite" // DB adapter
 	// _ "gorm.io/gorm/dialects/postgres" // DB adapter
 	_ "gorm.io/driver/mysql" // DB adapter
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+
 	// EnablePostgreSQL: remove the mysql package above, uncomment the following
+
+	dbutil "github.com/M15t/gram/pkg/util/db"
 )
 
 // New creates new database connection to the database server
-func New(cfg config.DB) (db *gorm.DB, sqldb *sql.DB, err error) {
+func New(cfg config.DB) (*gorm.DB, *sql.DB, error) {
 	// Add your DB related stuffs here, such as:
 	// - gorm.DefaultTableNameHandler
 	// - gowhere.DefaultConfig
@@ -36,20 +38,26 @@ func New(cfg config.DB) (db *gorm.DB, sqldb *sql.DB, err error) {
 		lo = logger.Discard
 	}
 
-	// ! EnablePostgreSQL: remove 2 lines above, uncomment the following
-	// db, err := dbutil.New("postgres", dbPsn, enableLog)
-	db, err = dbutil.New("mysql", cfg, &gorm.Config{
+	// parse extra params, merge with default params
+	// change to PostgreSQLDialector{} for PostgreSQL
+	dbConn, err := dbutil.NewDBConnection(&dbutil.MySQLDialector{}, cfg)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	// connect to db server
+	db, err := gorm.Open(dbConn, &gorm.Config{
 		Logger:                                   lo,
 		AllowGlobalUpdate:                        false,
 		CreateBatchSize:                          1000,
 		DisableForeignKeyConstraintWhenMigrating: true,
-		// NamingStrategy:                           schema.NamingStrategy{
-		// 	// SingularTable: true, // use singular table name, table for `User` would be `user` with this option enabled
-		// },
 	})
+	if err != nil {
+		return nil, nil, fmt.Errorf("cannot establish connection: %w", err)
+	}
 
 	// connection pool settings
-	sqldb, err = db.DB()
+	sqldb, err := db.DB()
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot get generic db instance: %w", err)
 	}
@@ -59,5 +67,5 @@ func New(cfg config.DB) (db *gorm.DB, sqldb *sql.DB, err error) {
 	sqldb.SetConnMaxLifetime(30 * time.Minute)
 	sqldb.SetConnMaxIdleTime(10 * time.Minute)
 
-	return
+	return db, sqldb, nil
 }
