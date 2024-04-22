@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"log"
+	"log/slog"
+	"os"
 	"time"
 
 	"github.com/M15t/gram/config"
@@ -49,7 +51,11 @@ func Run() (respErr error) {
 		return err
 	}
 
-	db, sqldb, err := db.New(cfg.DB)
+	// Create a slog logger, which:
+	//   - Logs to stdout.
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+
+	db, sqldb, err := db.New(cfg.DB, logger)
 	if err != nil {
 		return err
 	}

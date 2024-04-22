@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"log/slog"
-	"os"
 	"time"
 
 	"github.com/imdatngo/gowhere"
@@ -23,7 +22,7 @@ import (
 )
 
 // New creates new database connection to the database server
-func New(cfg config.DB) (*gorm.DB, *sql.DB, error) {
+func New(cfg config.DB, slogger *slog.Logger) (*gorm.DB, *sql.DB, error) {
 	// Add your DB related stuffs here, such as:
 	// - gorm.DefaultTableNameHandler
 	// - gowhere.DefaultConfig
@@ -32,13 +31,9 @@ func New(cfg config.DB) (*gorm.DB, *sql.DB, error) {
 	// gowhere.DefaultConfig.Dialect = gowhere.DialectPostgreSQL
 	gowhere.DefaultConfig.Dialect = gowhere.DialectMySQL
 
-	// Create a slog logger, which:
-	//   - Logs to stdout.
-	slogger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
-
 	// logger config
 	gcfg := sloggorm.NewConfig(slogger.Handler()).
-		// WithTraceAll(true).
+		WithTraceAll(true).
 		WithIgnoreRecordNotFoundError(true).
 		WithContextKeys(map[string]string{"id": "X-Request-ID"})
 

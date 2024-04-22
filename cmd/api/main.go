@@ -41,7 +41,13 @@ func main() {
 	cfg, err := config.LoadAll()
 	checkErr(err)
 
-	db, sqldb, err := db.New(cfg.DB)
+	// Create a slog logger, which:
+	//   - Logs to stdout.
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	filters := make([]slogger.Filter, 0)
+	filters = append(filters, slogger.IgnorePathContains("swagger"))
+
+	db, sqldb, err := db.New(cfg.DB, logger)
 	checkErr(err)
 	defer sqldb.Close()
 
@@ -54,12 +60,6 @@ func main() {
 		AllowOrigins:      cfg.Server.AllowOrigins,
 		Debug:             cfg.General.Debug,
 	})
-
-	// Create a slog logger, which:
-	//   - Logs to stdout.
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
-	filters := make([]slogger.Filter, 0)
-	filters = append(filters, slogger.IgnorePathContains("swagger"))
 
 	e.Use(slogger.NewWithConfig(logger, slogger.Config{
 		WithUserAgent:    true,
