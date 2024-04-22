@@ -2,9 +2,10 @@ package main
 
 import (
 	"embed"
+	"log/slog"
+	"os"
 
 	"github.com/M15t/gram/config"
-	"github.com/M15t/gram/internal/api/admin/memo"
 	"github.com/M15t/gram/internal/api/admin/session"
 	"github.com/M15t/gram/internal/api/admin/user"
 	"github.com/M15t/gram/internal/api/auth"
@@ -16,8 +17,8 @@ import (
 	"github.com/M15t/gram/pkg/server"
 	"github.com/M15t/gram/pkg/server/middleware/jwt"
 	"github.com/M15t/gram/pkg/server/middleware/secure"
+	"github.com/M15t/gram/pkg/server/middleware/slogger"
 	"github.com/M15t/gram/pkg/util/crypter"
-	"github.com/M15t/gram/pkg/util/firebase"
 
 	contextutil "github.com/M15t/gram/internal/api/context"
 
@@ -40,7 +41,13 @@ func main() {
 	cfg, err := config.LoadAll()
 	checkErr(err)
 
-	db, sqldb, err := db.New(cfg.DB)
+	// Create a slog logger, which:
+	//   - Logs to stdout.
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	filters := make([]slogger.Filter, 0)
+	filters = append(filters, slogger.IgnorePathContains("swagger"))
+
+	db, sqldb, err := db.New(cfg.DB, logger)
 	checkErr(err)
 	defer sqldb.Close()
 
@@ -54,6 +61,13 @@ func main() {
 		Debug:             cfg.General.Debug,
 	})
 
+	e.Use(slogger.NewWithConfig(logger, slogger.Config{
+		WithUserAgent:    true,
+		WithRequestBody:  true,
+		WithResponseBody: true,
+		Filters:          filters,
+	}))
+
 	if enableSwagger {
 		// Static page for SwaggerUI
 		e.GET("/swagger-ui/*", echo.StaticDirectoryHandler(echo.MustSubFS(swaggerui, "swagger-ui"), false), secure.DisableCache())
@@ -64,15 +78,11 @@ func main() {
 	repoSvc := repo.New(db)
 	rbacSvc := rbac.New(cfg.General.Debug)
 	jwtSvc := jwt.New(cfg.JWT.Algorithm, cfg.JWT.Secret, cfg.JWT.DurationAccessToken, cfg.JWT.DurationRefreshToken)
-	firebaseSvc := firebase.New(&firebase.Config{
-		FirebaseCredentials: cfg.App.FirebaseCredentials,
-	})
 
 	// Initialize services
-	authSvc := auth.New(repoSvc, jwtSvc, crypterSvc, firebaseSvc)
+	authSvc := auth.New(repoSvc, jwtSvc, crypterSvc)
 	sessionSvc := session.New(repoSvc, rbacSvc)
 	userSvc := user.New(repoSvc, rbacSvc, crypterSvc)
-	memoSvc := memo.New(repoSvc, rbacSvc)
 
 	// Initialize root API
 	root.NewHTTP(e)
@@ -84,7 +94,6 @@ func main() {
 	adminRouter.Use(jwtSvc.MWFunc(), contextutil.MWContext())
 	session.NewHTTP(sessionSvc, adminRouter.Group("/sessions"))
 	user.NewHTTP(userSvc, adminRouter.Group("/users"))
-	memo.NewHTTP(memoSvc, adminRouter.Group("/memos"))
 
 	server.Start(e, config.IsLambda())
 }

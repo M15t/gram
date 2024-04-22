@@ -15,7 +15,6 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/labstack/gommon/log"
 
 	"github.com/M15t/gram/pkg/server/middleware/secure"
 
@@ -102,18 +101,11 @@ func New(cfg *Config) *echo.Echo {
 	e.Server.ReadTimeout = time.Duration(cfg.ReadTimeout) * time.Second
 	e.Server.WriteTimeout = time.Duration(cfg.WriteTimeout) * time.Second
 
-	e.Use(middleware.Recover(), middleware.RequestID(), middleware.Logger())
+	e.Use(middleware.Recover(), middleware.RequestID())
 	e.Use(middleware.BodyLimitWithConfig(middleware.BodyLimitConfig{
 		Limit:   cfg.BodyLimit,
 		Skipper: cfg.BodyLimitSkipper,
 	}))
-
-	if e.Debug {
-		e.Logger.SetLevel(log.DEBUG)
-		e.Use(secure.BodyDump())
-	} else {
-		e.Logger.SetLevel(log.INFO)
-	}
 
 	// add security & cors middlewares
 	e.Use(secure.Headers(cfg.ContentSecurityPolicy), secure.SimpleCORS(cfg.AllowOrigins))

@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile.mysql
     container_name: gram-mysql-db
     ports:
-      - "3306:3306"
+      - "3307:3306"
     environment:
       # for root user. other users are created in provision script
       MYSQL_ROOT_PASSWORD: password

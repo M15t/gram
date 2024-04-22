@@ -5,7 +5,6 @@ import (
 	"io"
 	"net/http"
 
-	"cloud.google.com/go/firestore"
 	"github.com/mitchellh/mapstructure"
 )
 
@@ -39,9 +38,5 @@ func mapToStruct(input map[string]interface{}, output interface{}) error {
 	decoder, _ := mapstructure.NewDecoder(cfg)
 	decoder.Decode(input)
 
-	return nil
-}
-
-func mapToFireStoreUpdate(input map[string]interface{}) []firestore.Update {
 	return nil
 }
