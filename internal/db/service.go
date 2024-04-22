@@ -3,9 +3,12 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"log/slog"
+	"os"
 	"time"
 
 	"github.com/imdatngo/gowhere"
+	sloggorm "github.com/imdatngo/slog-gorm"
 
 	"github.com/M15t/gram/config"
 
@@ -13,7 +16,6 @@ import (
 	// _ "gorm.io/gorm/dialects/postgres" // DB adapter
 	_ "gorm.io/driver/mysql" // DB adapter
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 
 	// EnablePostgreSQL: remove the mysql package above, uncomment the following
 
@@ -30,13 +32,17 @@ func New(cfg config.DB) (*gorm.DB, *sql.DB, error) {
 	// gowhere.DefaultConfig.Dialect = gowhere.DialectPostgreSQL
 	gowhere.DefaultConfig.Dialect = gowhere.DialectMySQL
 
+	// Create a slog logger, which:
+	//   - Logs to stdout.
+	slogger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+
 	// logger config
-	var lo logger.Interface
-	if cfg.Logging > 0 {
-		lo = logger.Default.LogMode(logger.LogLevel(cfg.Logging))
-	} else {
-		lo = logger.Discard
-	}
+	gcfg := sloggorm.NewConfig(slogger.Handler()).
+		// WithTraceAll(true).
+		WithIgnoreRecordNotFoundError(true).
+		WithContextKeys(map[string]string{"id": "X-Request-ID"})
+
+	glogger := sloggorm.NewWithConfig(gcfg)
 
 	// parse extra params, merge with default params
 	// change to PostgreSQLDialector{} for PostgreSQL
@@ -47,7 +53,7 @@ func New(cfg config.DB) (*gorm.DB, *sql.DB, error) {
 
 	// connect to db server
 	db, err := gorm.Open(dbConn, &gorm.Config{
-		Logger:                                   lo,
+		Logger:                                   glogger,
 		AllowGlobalUpdate:                        false,
 		CreateBatchSize:                          1000,
 		DisableForeignKeyConstraintWhenMigrating: true,

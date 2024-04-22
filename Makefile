@@ -63,7 +63,7 @@ build.funcs.lambda: ## Build the functions for AWS Lambda
 	@$(MAKE) TARGET=lambda build.funcs
 
 deploy.dev: ## Deploy to DEV environment
-	aws-vault exec [REPLACE_BY_AWS_PROFILE] -- scripts/deploy.sh dev
+	aws-vault exec [REPLACE_BY_AWS_PROFILE] --no-session -- scripts/deploy.sh dev
 
 deploy.uat: ## Deploy to UAT environment
 	aws-vault exec [REPLACE_BY_AWS_PROFILE] --no-session -- scripts/deploy.sh uat

@@ -2,6 +2,8 @@ package main
 
 import (
 	"embed"
+	"log/slog"
+	"os"
 
 	"github.com/M15t/gram/config"
 	"github.com/M15t/gram/internal/api/admin/session"
@@ -15,6 +17,7 @@ import (
 	"github.com/M15t/gram/pkg/server"
 	"github.com/M15t/gram/pkg/server/middleware/jwt"
 	"github.com/M15t/gram/pkg/server/middleware/secure"
+	"github.com/M15t/gram/pkg/server/middleware/slogger"
 	"github.com/M15t/gram/pkg/util/crypter"
 
 	contextutil "github.com/M15t/gram/internal/api/context"
@@ -51,6 +54,19 @@ func main() {
 		AllowOrigins:      cfg.Server.AllowOrigins,
 		Debug:             cfg.General.Debug,
 	})
+
+	// Create a slog logger, which:
+	//   - Logs to stdout.
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	filters := make([]slogger.Filter, 0)
+	filters = append(filters, slogger.IgnorePathContains("swagger"))
+
+	e.Use(slogger.NewWithConfig(logger, slogger.Config{
+		WithUserAgent:    true,
+		WithRequestBody:  true,
+		WithResponseBody: true,
+		Filters:          filters,
+	}))
 
 	if enableSwagger {
 		// Static page for SwaggerUI
