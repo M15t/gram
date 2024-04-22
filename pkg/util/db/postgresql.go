@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/M15t/gram/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -13,7 +12,7 @@ import (
 type PostgreSQLDialector struct{}
 
 // OpenConnection opens a new PostgreSQL connection
-func (d *PostgreSQLDialector) OpenConnection(cfg config.DB) (gorm.Dialector, error) {
+func (d *PostgreSQLDialector) OpenConnection(cfg Config) (gorm.Dialector, error) {
 	params, err := url.ParseQuery(cfg.Params)
 	if err != nil {
 		return nil, fmt.Errorf("invalid db params '%s': %w", cfg.Params, err)

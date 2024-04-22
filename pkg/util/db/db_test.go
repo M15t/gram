@@ -3,14 +3,13 @@ package dbutil_test
 import (
 	"testing"
 
-	"github.com/M15t/gram/config"
 	dbutil "github.com/M15t/gram/pkg/util/db"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestMySQLDialector_OpenConnection(t *testing.T) {
 
-	cfg := config.DB{
+	cfg := dbutil.Config{
 		Username: "testuser",
 		Password: "testpassword",
 		Host:     "localhost",
@@ -27,7 +26,7 @@ func TestMySQLDialector_OpenConnection(t *testing.T) {
 }
 
 func TestPostgreSQLDialector_OpenConnection(t *testing.T) {
-	cfg := config.DB{
+	cfg := dbutil.Config{
 		Username: "testuser",
 		Password: "testpass",
 		Host:     "localhost",

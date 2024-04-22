@@ -41,7 +41,14 @@ func New(cfg config.DB, slogger *slog.Logger) (*gorm.DB, *sql.DB, error) {
 
 	// parse extra params, merge with default params
 	// change to PostgreSQLDialector{} for PostgreSQL
-	dbConn, err := dbutil.NewDBConnection(&dbutil.MySQLDialector{}, cfg)
+	dbConn, err := dbutil.NewDBConnection(&dbutil.MySQLDialector{}, dbutil.Config{
+		Username: cfg.Username,
+		Password: cfg.Password,
+		Host:     cfg.Host,
+		Port:     cfg.Port,
+		Database: cfg.Database,
+		Params:   cfg.Params,
+	})
 	if err != nil {
 		return nil, nil, err
 	}
