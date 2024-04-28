@@ -161,7 +161,7 @@ func NewWithConfig(logger *slog.Logger, config Config) echo.MiddlewareFunc {
 
 			responseAttributes := []slog.Attr{
 				slog.Time("time", end),
-				slog.Duration("latency", latency),
+				slog.String("latency", latency.String()),
 				slog.Int("status", status),
 			}
 

@@ -26,7 +26,7 @@ type Service interface {
 func NewHTTP(svc Service, eg *echo.Group) {
 	h := HTTP{svc: svc}
 
-	// swagger:operation POST /auth/login auth authLogin
+	// swagger:operation POST /v1/auth/login auth authLogin
 	// ---
 	// summary: Logs in user by email, password and grant_type
 	// security: []
@@ -48,7 +48,7 @@ func NewHTTP(svc Service, eg *echo.Group) {
 	//       "$ref": "#/definitions/ErrorResponse"
 	eg.POST("/login", h.login)
 
-	// swagger:operation POST /auth/refresh-token auth authRefreshToken
+	// swagger:operation POST /v1/auth/refresh-token auth authRefreshToken
 	// ---
 	// summary: Refresh access token.
 	// security: []

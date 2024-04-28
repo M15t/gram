@@ -21,11 +21,13 @@ func NewSession(gdb *gorm.DB) *Session {
 }
 
 // FindByID finds a session by the given ID and preload User
-func (r *Session) FindByID(ctx context.Context, id, userID string) (rec *types.Session, err error) {
-	rec = &types.Session{}
-	err = r.GDB.Preload(`User`).Where(`id = ? AND user_id = ? AND is_blocked = false`, id, userID).Take(rec).Error
+func (r *Session) FindByID(ctx context.Context, id, userID string) (*types.Session, error) {
+	rec := &types.Session{}
+	if err := r.GDB.WithContext(ctx).Preload(`User`).Where(`id = ? AND user_id = ? AND is_blocked = false`, id, userID).Take(rec).Error; err != nil {
+		return nil, err
+	}
 
-	return
+	return rec, nil
 }
 
 // DeleteExpired deletes expired sessions

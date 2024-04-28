@@ -3,13 +3,12 @@ package main
 import (
 	"embed"
 	"log/slog"
-	"os"
 
 	"github.com/M15t/gram/config"
-	"github.com/M15t/gram/internal/api/admin/session"
-	"github.com/M15t/gram/internal/api/admin/user"
-	"github.com/M15t/gram/internal/api/auth"
 	"github.com/M15t/gram/internal/api/root"
+	"github.com/M15t/gram/internal/api/v1/admin/session"
+	"github.com/M15t/gram/internal/api/v1/admin/user"
+	"github.com/M15t/gram/internal/api/v1/auth"
 	"github.com/M15t/gram/internal/db"
 	"github.com/M15t/gram/internal/rbac"
 	"github.com/M15t/gram/internal/repo"
@@ -19,6 +18,7 @@ import (
 	"github.com/M15t/gram/pkg/server/middleware/secure"
 	"github.com/M15t/gram/pkg/server/middleware/slogger"
 	"github.com/M15t/gram/pkg/util/crypter"
+	"github.com/M15t/gram/pkg/util/prettylog"
 
 	contextutil "github.com/M15t/gram/internal/api/context"
 
@@ -43,7 +43,7 @@ func main() {
 
 	// Create a slog logger, which:
 	//   - Logs to stdout.
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	logger := slog.New(prettylog.NewHandler(nil))
 	filters := make([]slogger.Filter, 0)
 	filters = append(filters, slogger.IgnorePathContains("swagger"))
 
@@ -86,11 +86,12 @@ func main() {
 
 	// Initialize root API
 	root.NewHTTP(e)
+	v1Router := e.Group("/v1")
 
-	auth.NewHTTP(authSvc, e.Group("/auth"))
+	auth.NewHTTP(authSvc, v1Router.Group("/auth"))
 
 	// Initialize admin APIs
-	adminRouter := e.Group("/admin")
+	adminRouter := v1Router.Group("/admin")
 	adminRouter.Use(jwtSvc.MWFunc(), contextutil.MWContext())
 	session.NewHTTP(sessionSvc, adminRouter.Group("/sessions"))
 	user.NewHTTP(userSvc, adminRouter.Group("/users"))

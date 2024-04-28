@@ -37,7 +37,7 @@ type Service interface {
 func NewHTTP(svc Service, eg *echo.Group) {
 	h := HTTP{svc: svc}
 
-	// swagger:operation POST /admin/users admin-users usersCreate
+	// swagger:operation POST /v1/admin/users admin-users usersCreate
 	// ---
 	// summary: Creates new user
 	// parameters:
@@ -58,7 +58,7 @@ func NewHTTP(svc Service, eg *echo.Group) {
 	//       "$ref": "#/definitions/ErrorResponse"
 	eg.POST("", h.create)
 
-	// swagger:operation GET /admin/users/{id} admin-users usersRead
+	// swagger:operation GET /v1/admin/users/{id} admin-users usersRead
 	// ---
 	// summary: Returns a single user
 	// parameters:
@@ -78,7 +78,7 @@ func NewHTTP(svc Service, eg *echo.Group) {
 	//       "$ref": "#/definitions/ErrorResponse"
 	eg.GET("/:id", h.read)
 
-	// swagger:operation GET /admin/users admin-users usersList
+	// swagger:operation GET /v1/admin/users admin-users usersList
 	// ---
 	// summary: Returns list of users
 	// responses:
@@ -92,7 +92,7 @@ func NewHTTP(svc Service, eg *echo.Group) {
 	//       "$ref": "#/definitions/ErrorResponse"
 	eg.GET("", h.list)
 
-	// swagger:operation PATCH /admin/users/{id} admin-users usersUpdate
+	// swagger:operation PATCH /v1/admin/users/{id} admin-users usersUpdate
 	// ---
 	// summary: Updates user information
 	// parameters:
@@ -118,7 +118,7 @@ func NewHTTP(svc Service, eg *echo.Group) {
 	//       "$ref": "#/definitions/ErrorResponse"
 	eg.PATCH("/:id", h.update)
 
-	// swagger:operation DELETE /admin/users/{id} admin-users usersDelete
+	// swagger:operation DELETE /v1/admin/users/{id} admin-users usersDelete
 	// ---
 	// summary: Deletes an user
 	// parameters:
@@ -136,7 +136,7 @@ func NewHTTP(svc Service, eg *echo.Group) {
 	//       "$ref": "#/definitions/ErrorResponse"
 	eg.DELETE("/:id", h.delete)
 
-	// swagger:operation GET /admin/users/me admin-users usersMe
+	// swagger:operation GET /v1/admin/users/me admin-users usersMe
 	// ---
 	// summary: Returns authenticated user
 	// responses:
@@ -150,7 +150,7 @@ func NewHTTP(svc Service, eg *echo.Group) {
 	//       "$ref": "#/definitions/ErrorResponse"
 	eg.GET("/me", h.me)
 
-	// swagger:operation PATCH /admin/users/me/password admin-users usersChangePwd
+	// swagger:operation PATCH /v1/admin/users/me/password admin-users usersChangePwd
 	// ---
 	// summary: Changes authenticated user password
 	// parameters:

@@ -28,7 +28,7 @@ type Service interface {
 func NewHTTP(svc Service, eg *echo.Group) {
 	h := HTTP{svc: svc}
 
-	// swagger:operation GET /admin/sessions/{id} admin-sessions sessionsRead
+	// swagger:operation GET /v1/admin/sessions/{id} admin-sessions sessionsRead
 	// ---
 	// summary: Returns a single session
 	// parameters:
@@ -48,7 +48,7 @@ func NewHTTP(svc Service, eg *echo.Group) {
 	//       "$ref": "#/definitions/ErrorResponse"
 	eg.GET("/:id", h.read)
 
-	// swagger:operation GET /admin/sessions admin-sessions sessionsList
+	// swagger:operation GET /v1/admin/sessions admin-sessions sessionsList
 	// ---
 	// summary: Returns list of sessions
 	// responses:
@@ -62,7 +62,7 @@ func NewHTTP(svc Service, eg *echo.Group) {
 	//       "$ref": "#/definitions/ErrorResponse"
 	eg.GET("", h.list)
 
-	// swagger:operation PATCH /admin/sessions/{id} admin-sessions sessionsUpdate
+	// swagger:operation PATCH /v1/admin/sessions/{id} admin-sessions sessionsUpdate
 	// ---
 	// summary: Updates session information
 	// parameters:
@@ -88,7 +88,7 @@ func NewHTTP(svc Service, eg *echo.Group) {
 	//       "$ref": "#/definitions/ErrorResponse"
 	eg.PATCH("/:id", h.update)
 
-	// swagger:operation DELETE /admin/sessions/{id} admin-sessions sessionsDelete
+	// swagger:operation DELETE /v1/admin/sessions/{id} admin-sessions sessionsDelete
 	// ---
 	// summary: Deletes an session
 	// parameters:

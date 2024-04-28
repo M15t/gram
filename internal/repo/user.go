@@ -45,11 +45,13 @@ func (r *User) List(ctx context.Context, output interface{}, count *int64, lc *r
 }
 
 // FindByEmail finds a user by the given email
-func (r *User) FindByEmail(ctx context.Context, email string) (rec *types.User, err error) {
-	rec = &types.User{}
-	err = r.GDB.Where(`email = ?`, email).Take(rec).Error
+func (r *User) FindByEmail(ctx context.Context, email string) (*types.User, error) {
+	rec := &types.User{}
+	if err := r.GDB.WithContext(ctx).Where(`email = ?`, email).Take(rec).Error; err != nil {
+		return nil, err
+	}
 
-	return
+	return rec, nil
 }
 
 // UpdateRefreshToken updates the refresh token of the given user

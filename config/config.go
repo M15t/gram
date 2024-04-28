@@ -30,7 +30,6 @@ type (
 
 	// DB holds DB configurations
 	DB struct {
-		Driver   string `env:"DB_DRIVER,notEmpty"`
 		Host     string `env:"DB_HOST,notEmpty"`
 		Port     int    `env:"DB_PORT,notEmpty"`
 		Username string `env:"DB_USERNAME,notEmpty"`
