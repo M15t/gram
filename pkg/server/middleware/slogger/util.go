@@ -11,7 +11,7 @@ func secureBody(body interface{}, sensitiveKeys []string) {
 	case map[string]interface{}:
 		for key, value := range v {
 			if containsSensitiveKey(key, sensitiveKeys) {
-				v[key] = "***"
+				v[key] = "******"
 			} else {
 				secureBody(value, sensitiveKeys)
 			}

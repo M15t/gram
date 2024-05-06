@@ -1,97 +1,58 @@
 package prettylog
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
 	"log/slog"
-	"strconv"
 	"strings"
-	"sync"
 )
 
-const (
-	timeFormat = "[2006-01-02 15:04:05.000]"
-
-	reset = "\033[0m"
-
-	black        = 30
-	red          = 31
-	green        = 32
-	yellow       = 33
-	blue         = 34
-	magenta      = 35
-	cyan         = 36
-	lightGray    = 37
-	darkGray     = 90
-	lightRed     = 91
-	lightGreen   = 92
-	lightYellow  = 93
-	lightBlue    = 94
-	lightMagenta = 95
-	lightCyan    = 96
-	white        = 97
-)
-
-func colorize(colorCode int, v string) string {
-	return fmt.Sprintf("\033[%sm%s%s", strconv.Itoa(colorCode), v, reset)
+type baseAttributes struct {
+	ctx                   context.Context
+	level, timestamp, msg string
+	r                     slog.Record
 }
 
-// Handler represent for prettylog
-type Handler struct {
-	h slog.Handler
-	r func([]string, slog.Attr) slog.Attr
-	b *bytes.Buffer
-	m *sync.Mutex
-}
-
-// Enabled reports whether l emits log records at the given context and level.
+// Enabled checks if the log handler is enabled for the given log level
 func (h *Handler) Enabled(ctx context.Context, level slog.Level) bool {
 	return h.h.Enabled(ctx, level)
 }
 
-// WithAttrs returns a new Handler whose attributes consist of
-// both the receiver's attributes and the arguments.
-// The Handler owns the slice: it may retain, modify or discard it.
+// WithAttrs returns a new log handler with additional attributes
 func (h *Handler) WithAttrs(attrs []slog.Attr) slog.Handler {
 	return &Handler{h: h.h.WithAttrs(attrs), b: h.b, r: h.r, m: h.m}
 }
 
-// WithGroup returns a Logger that starts a group, if name is non-empty.
-// The keys of all attributes added to the Logger will be qualified by the given
-// name. (How that qualification happens depends on the [Handler.WithGroup]
-// method of the Logger's Handler.)
-//
-// If name is empty, WithGroup returns the receiver.
+// WithGroup returns a new log handler with the specified group name
 func (h *Handler) WithGroup(name string) slog.Handler {
 	return &Handler{h: h.h.WithGroup(name), b: h.b, r: h.r, m: h.m}
 }
 
-func (h *Handler) computeAttrs(
-	ctx context.Context,
-	r slog.Record,
-) (map[string]any, error) {
-	h.m.Lock()
-	defer func() {
-		h.b.Reset()
-		h.m.Unlock()
-	}()
-	if err := h.h.Handle(ctx, r); err != nil {
-		return nil, fmt.Errorf("error when calling inner handler's Handle: %w", err)
+// Handle is a method of the Handler struct that handles a slog.Record and returns an error
+func (h *Handler) Handle(ctx context.Context, r slog.Record) error {
+	baseAttributes := h.processBaseAttrs(ctx, r)
+
+	out := strings.Builder{}
+	switch h.format {
+	case JSONFormat:
+		if err := h.handleJSON(baseAttributes, &out); err != nil {
+			return err
+		}
+	case TextFormat:
+		if err := h.handleText(baseAttributes, &out); err != nil {
+			return err
+		}
+	default:
+		return fmt.Errorf("unknown format type")
 	}
 
-	var attrs map[string]any
-	err := json.Unmarshal(h.b.Bytes(), &attrs)
-	if err != nil {
-		return nil, fmt.Errorf("error when unmarshaling inner handler's Handle result: %w", err)
-	}
-	return attrs, nil
+	fmt.Println(out.String())
+
+	return nil
 }
 
-// Handle returns h's Handler.
-func (h *Handler) Handle(ctx context.Context, r slog.Record) error {
-
+func (h *Handler) processBaseAttrs(ctx context.Context, r slog.Record) baseAttributes {
 	var level string
 	levelAttr := slog.Attr{
 		Key:   slog.LevelKey,
@@ -102,7 +63,7 @@ func (h *Handler) Handle(ctx context.Context, r slog.Record) error {
 	}
 
 	if !levelAttr.Equal(slog.Attr{}) {
-		level = levelAttr.Value.String() + ":"
+		level = levelAttr.Value.String()[:3]
 
 		if r.Level <= slog.LevelDebug {
 			level = colorize(lightGray, level)
@@ -143,66 +104,99 @@ func (h *Handler) Handle(ctx context.Context, r slog.Record) error {
 		msg = colorize(white, msgAttr.Value.String())
 	}
 
-	attrs, err := h.computeAttrs(ctx, r)
+	return baseAttributes{
+		ctx:       ctx,
+		level:     level,
+		timestamp: timestamp,
+		msg:       msg,
+		r:         r,
+	}
+}
+
+func (h *Handler) handleJSON(baseAttrs baseAttributes, out *strings.Builder) error {
+	// JSON handler logic
+	attrs, err := h.computeAttrs(baseAttrs.ctx, baseAttrs.r)
 	if err != nil {
 		return err
 	}
+
 	bytes, err := json.MarshalIndent(attrs, "", "  ")
 	if err != nil {
-		return fmt.Errorf("error when marshaling attrs: %w", err)
+		return err
 	}
 
-	out := strings.Builder{}
-	if len(timestamp) > 0 {
-		out.WriteString(timestamp)
+	if len(baseAttrs.timestamp) > 0 {
+		out.WriteString(baseAttrs.timestamp)
 		out.WriteString(" ")
 	}
-	if len(level) > 0 {
-		out.WriteString(level)
+	if len(baseAttrs.level) > 0 {
+		out.WriteString(baseAttrs.level)
 		out.WriteString(" ")
 	}
-	if len(msg) > 0 {
-		out.WriteString(msg)
+	if len(baseAttrs.msg) > 0 {
+		out.WriteString(baseAttrs.msg)
 		out.WriteString(" ")
 	}
 	if len(bytes) > 0 {
 		out.WriteString(colorize(darkGray, string(bytes)))
 	}
-	fmt.Println(out.String())
 
 	return nil
 }
 
-func suppressDefaults(
-	next func([]string, slog.Attr) slog.Attr,
-) func([]string, slog.Attr) slog.Attr {
-	return func(groups []string, a slog.Attr) slog.Attr {
-		if a.Key == slog.TimeKey ||
-			a.Key == slog.LevelKey ||
-			a.Key == slog.MessageKey {
-			return slog.Attr{}
+func (h *Handler) handleText(baseAttrs baseAttributes, out *strings.Builder) error {
+	// Text handler logic
+	attrs := make(map[string]interface{}, baseAttrs.r.NumAttrs())
+	baseAttrs.r.Attrs(func(a slog.Attr) bool {
+		value := a.Value.Any()
+
+		// Handle nil value
+		if value == nil {
+			return true // Skip this attribute
 		}
-		if next == nil {
-			return a
-		}
-		return next(groups, a)
+
+		// Start the recursion with an empty prefix
+		flattenAttributes(a.Key, value, attrs)
+
+		return true
+	})
+
+	if len(baseAttrs.timestamp) > 0 {
+		out.WriteString(baseAttrs.timestamp)
+		out.WriteString(" ")
 	}
+	if len(baseAttrs.level) > 0 {
+		out.WriteString(baseAttrs.level)
+		out.WriteString(" ")
+	}
+	if len(baseAttrs.msg) > 0 {
+		out.WriteString(baseAttrs.msg)
+		out.WriteString(" ")
+	}
+
+	for key, value := range attrs {
+		key = colorize(lightRed, key)
+		out.WriteString(fmt.Sprintf("%s=%v ", key, value))
+	}
+
+	return nil
 }
 
-// NewHandler create new handler
-func NewHandler(opts *slog.HandlerOptions) *Handler {
-	if opts == nil {
-		opts = &slog.HandlerOptions{}
+func (h *Handler) computeAttrs(ctx context.Context, r slog.Record) (map[string]any, error) {
+	h.m.Lock()
+	defer func() {
+		h.b.Reset()
+		h.m.Unlock()
+	}()
+	if err := h.h.Handle(ctx, r); err != nil {
+		return nil, fmt.Errorf("error when calling inner handler's Handle: %w", err)
 	}
-	b := &bytes.Buffer{}
-	return &Handler{
-		b: b,
-		h: slog.NewJSONHandler(b, &slog.HandlerOptions{
-			Level:       opts.Level,
-			AddSource:   opts.AddSource,
-			ReplaceAttr: suppressDefaults(opts.ReplaceAttr),
-		}),
-		r: opts.ReplaceAttr,
-		m: &sync.Mutex{},
+
+	var attrs map[string]any
+	err := json.Unmarshal(h.b.Bytes(), &attrs)
+	if err != nil {
+		return nil, fmt.Errorf("error when unmarshaling inner handler's Handle result: %w", err)
 	}
+
+	return attrs, nil
 }

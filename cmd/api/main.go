@@ -41,16 +41,6 @@ func main() {
 	cfg, err := config.LoadAll()
 	checkErr(err)
 
-	// Create a slog logger, which:
-	//   - Logs to stdout.
-	logger := slog.New(prettylog.NewHandler(nil))
-	filters := make([]slogger.Filter, 0)
-	filters = append(filters, slogger.IgnorePathContains("swagger"))
-
-	db, sqldb, err := db.New(cfg.DB, logger)
-	checkErr(err)
-	defer sqldb.Close()
-
 	// Initialize HTTP server
 	e := server.New(&server.Config{
 		Port:              cfg.Server.Port,
@@ -61,17 +51,31 @@ func main() {
 		Debug:             cfg.General.Debug,
 	})
 
+	// Create a slog logger, which:
+	//   - Logs to stdout.
+	// with prettylog. try replace with prettylog.NewHandler(nil)
+	// logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+	logger := slog.New(prettylog.NewHandler(nil, prettylog.TextFormat))
+
 	e.Use(slogger.NewWithConfig(logger, slogger.Config{
-		WithUserAgent:    true,
-		WithRequestBody:  true,
-		WithResponseBody: true,
-		Filters:          filters,
+		WithRequestID: true,
+		// WithRequestBody:  true,
+		// WithResponseBody: true,
+		// WithDBQueries: true,
+		Filters: []slogger.Filter{
+			slogger.IgnorePathContains("swagger"),
+		},
 	}))
 
 	if enableSwagger {
 		// Static page for SwaggerUI
 		e.GET("/swagger-ui/*", echo.StaticDirectoryHandler(echo.MustSubFS(swaggerui, "swagger-ui"), false), secure.DisableCache())
 	}
+
+	// Initialize the database connection
+	db, sqldb, err := db.New(cfg.DB)
+	checkErr(err)
+	defer sqldb.Close()
 
 	// Initialize core services
 	crypterSvc := crypter.New()

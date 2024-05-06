@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/imdatngo/gowhere"
-	sloggorm "github.com/imdatngo/slog-gorm"
 
 	"github.com/M15t/gram/config"
 
@@ -16,13 +15,15 @@ import (
 	_ "gorm.io/driver/mysql" // DB adapter
 	"gorm.io/gorm"
 
-	// EnablePostgreSQL: remove the mysql package above, uncomment the following
+	dblogger "github.com/M15t/gram/pkg/util/db/logger"
+	"github.com/M15t/gram/pkg/util/prettylog"
 
+	// EnablePostgreSQL: remove the mysql package above, uncomment the following
 	dbutil "github.com/M15t/gram/pkg/util/db"
 )
 
 // New creates new database connection to the database server
-func New(cfg config.DB, slogger *slog.Logger) (*gorm.DB, *sql.DB, error) {
+func New(cfg config.DB) (*gorm.DB, *sql.DB, error) {
 	// Add your DB related stuffs here, such as:
 	// - gorm.DefaultTableNameHandler
 	// - gowhere.DefaultConfig
@@ -31,13 +32,35 @@ func New(cfg config.DB, slogger *slog.Logger) (*gorm.DB, *sql.DB, error) {
 	// gowhere.DefaultConfig.Dialect = gowhere.DialectPostgreSQL
 	gowhere.DefaultConfig.Dialect = gowhere.DialectMySQL
 
-	// logger config
-	gcfg := sloggorm.NewConfig(slogger.Handler()).
-		WithTraceAll(true).
-		WithIgnoreRecordNotFoundError(true).
-		WithContextKeys(map[string]string{"id": "X-Request-ID"})
+	// ! logger config for slog-gorm
+	handlerOptions := &slog.HandlerOptions{}
+	switch cfg.Logging {
+	case -4: // LevelDebug
+		handlerOptions.Level = slog.LevelDebug
+	case 0: // LevelInfo
+		handlerOptions.Level = slog.LevelInfo
+	case 4: // LevelWarn
+		handlerOptions.Level = slog.LevelWarn
+	case 8: // LevelError
+		handlerOptions.Level = slog.LevelError
+	}
 
-	glogger := sloggorm.NewWithConfig(gcfg)
+	// slogger := slog.New(slog.NewTextHandler(os.Stdout, handlerOptions))
+	slogger := slog.New(prettylog.NewHandler(nil, prettylog.TextFormat))
+
+	gcfg := dblogger.NewConfig(slogger.Handler()).
+		WithTraceAll(true).
+		WithRequestID(true)
+
+	myLogger := dblogger.NewWithConfig(gcfg)
+
+	// ! default gorm logger
+	// var myLogger logger.Interface
+	// if cfg.Logging > 0 {
+	// 	myLogger = logger.Default.LogMode(logger.LogLevel(cfg.Logging))
+	// } else {
+	// 	myLogger = logger.Discard
+	// }
 
 	// parse extra params, merge with default params
 	// change to PostgreSQLDialector{} for PostgreSQL
@@ -55,7 +78,7 @@ func New(cfg config.DB, slogger *slog.Logger) (*gorm.DB, *sql.DB, error) {
 
 	// connect to db server
 	db, err := gorm.Open(dbConn, &gorm.Config{
-		Logger:                                   glogger,
+		Logger:                                   myLogger,
 		AllowGlobalUpdate:                        false,
 		CreateBatchSize:                          1000,
 		DisableForeignKeyConstraintWhenMigrating: true,

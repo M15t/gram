@@ -35,8 +35,8 @@ type (
 		Username string `env:"DB_USERNAME,notEmpty"`
 		Password string `env:"DB_PASSWORD,notEmpty"`
 		Database string `env:"DB_DATABASE,notEmpty"`
-		// Logging  int    `env:"DB_LOGGING" envDefault:"1"` // -4=debug, 0=info, 4=warn, 8=error
-		Params string `env:"DB_PARAMS"`
+		Logging  int    `env:"DB_LOGGING" envDefault:"0"` // -4=debug, 0=info, 4=warn, 8=error
+		Params   string `env:"DB_PARAMS"`
 	}
 
 	// JWT holds JWT configurations

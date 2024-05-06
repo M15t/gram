@@ -16,6 +16,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 
+	"github.com/M15t/gram/pkg/server/middleware/requestid"
 	"github.com/M15t/gram/pkg/server/middleware/secure"
 
 	echoadapter "github.com/awslabs/aws-lambda-go-api-proxy/echo"
@@ -101,7 +102,7 @@ func New(cfg *Config) *echo.Echo {
 	e.Server.ReadTimeout = time.Duration(cfg.ReadTimeout) * time.Second
 	e.Server.WriteTimeout = time.Duration(cfg.WriteTimeout) * time.Second
 
-	e.Use(middleware.Recover(), middleware.RequestID())
+	e.Use(middleware.Recover(), requestid.New())
 	e.Use(middleware.BodyLimitWithConfig(middleware.BodyLimitConfig{
 		Limit:   cfg.BodyLimit,
 		Skipper: cfg.BodyLimitSkipper,

@@ -1,24 +1,39 @@
 package secure
 
+// When allowOrigins is not empty, the function should return a middleware function that adds CORS headers to the response for simple requests with allowed origins.
 import (
-	"reflect"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	"github.com/labstack/echo/v4"
+	"github.com/stretchr/testify/assert"
 )
 
-func TestBodyDump(t *testing.T) {
-	tests := []struct {
-		name string
-		want echo.MiddlewareFunc
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := BodyDump(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("BodyDump() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+func TestSimpleCORSWithAllowedOrigins(t *testing.T) {
+	// Setup
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+
+	// Set the request origin header
+	req.Header.Set(echo.HeaderOrigin, "http://example.com")
+
+	// Define the allowed origins
+	allowOrigins := []string{"http://example.com"}
+
+	// Call the SimpleCORS middleware
+	middleware := SimpleCORS(allowOrigins)
+	handler := middleware(func(c echo.Context) error {
+		return c.String(http.StatusOK, "OK")
+	})
+
+	// Perform the request
+	err := handler(c)
+
+	// Assertions
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusOK, rec.Code)
+	assert.Equal(t, "http://example.com", rec.Header().Get(echo.HeaderAccessControlAllowOrigin))
 }

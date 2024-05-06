@@ -1,9 +1,7 @@
 package secure
 
 import (
-	"encoding/json"
 	"net/http"
-	"strings"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -35,51 +33,6 @@ func CORS(cfg CORSConfig) echo.MiddlewareFunc {
 		AllowHeaders:  []string{"Origin", "Content-Type", "Accept", "Authorization"},
 		ExposeHeaders: []string{"Etag"},
 		MaxAge:        86400,
-	})
-}
-
-// BodyDump prints out the request body for debugging purpose
-func BodyDump() echo.MiddlewareFunc {
-	secretFields := []string{"password", "key", "token", "cert", "username", "email", "phone", "mobile"}
-	return middleware.BodyDumpWithConfig(middleware.BodyDumpConfig{
-		Skipper: func(c echo.Context) bool {
-			// request method
-			requestMethod := c.Request().Method
-			if requestMethod != http.MethodPatch && requestMethod != http.MethodPost && requestMethod != http.MethodPut {
-				return true
-			}
-			// only support json content type
-			reqContentType := c.Request().Header.Get("Content-Type")
-			resContentType := c.Response().Header().Get("Content-Type")
-			if !strings.Contains(reqContentType, "application/json") && !strings.Contains(resContentType, "application/json") {
-				return true
-			}
-			// request too large
-			if length := c.Request().ContentLength; length > 1000000 {
-				c.Logger().Warnf("Skipped BodyDump, request body too large: %d", length)
-				return true
-			}
-			return false
-		},
-		Handler: func(c echo.Context, reqBody, resBody []byte) {
-			if strings.Contains(c.Request().Header.Get("Content-Type"), "application/json") && len(reqBody) > 0 {
-				var bodymap map[string]interface{}
-				if err := json.Unmarshal(reqBody, &bodymap); err == nil {
-					bodymap = censorSecerts(c.Request().URL.String(), bodymap, secretFields)
-					reqBody, _ = json.Marshal(bodymap)
-					c.Logger().Info("Request Body: " + string(reqBody))
-				}
-			}
-
-			if strings.Contains(c.Response().Header().Get("Content-Type"), "application/json") && len(resBody) > 0 {
-				var bodymap map[string]interface{}
-				if err := json.Unmarshal(resBody, &bodymap); err == nil {
-					bodymap = censorSecerts(c.Request().URL.String(), bodymap, secretFields)
-					resBody, _ = json.Marshal(bodymap)
-					c.Logger().Info("Response Body: " + string(resBody))
-				}
-			}
-		},
 	})
 }
 
@@ -135,29 +88,4 @@ func SimpleCORS(allowOrigins []string) echo.MiddlewareFunc {
 			return echo.ErrMethodNotAllowed
 		}
 	}
-}
-
-func censorSecerts(uri string, body map[string]interface{}, secrets []string) map[string]interface{} {
-	for key, val := range body {
-		found := false
-		lowerkey := strings.ToLower(key)
-		for _, secretKey := range secrets {
-			if secretKey == lowerkey || strings.Contains(lowerkey, secretKey) {
-				found = true
-				break
-			}
-		}
-		if found {
-			body[key] = "***"
-			continue
-		}
-
-		switch v := val.(type) {
-		case map[string]interface{}:
-			body[key] = censorSecerts(uri, v, secrets)
-			continue
-		}
-	}
-
-	return body
 }
