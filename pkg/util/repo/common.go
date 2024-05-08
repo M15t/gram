@@ -105,7 +105,7 @@ func (d *Repo[T]) Existed(ctx context.Context, conds ...any) (bool, error) {
 }
 
 // ReadAllByCondition retrieves a list of entities based on the provided query conditions.
-func (d *Repo[T]) ReadAllByCondition(ctx context.Context, output interface{}, count *int64, lqc *requestutil.ListQueryCondition) error {
+func (d *Repo[T]) ReadAllByCondition(ctx context.Context, output interface{}, count *int64, lqc *requestutil.ListQueryCondition, preload ...string) error {
 	db := d.GDB.WithContext(ctx)
 
 	if lqc != nil {
@@ -118,6 +118,11 @@ func (d *Repo[T]) ReadAllByCondition(ctx context.Context, output interface{}, co
 		// Apply pagination and sorting
 		db = WithPaging(db, lqc.Page, lqc.PerPage)
 		db = WithSorting(db, lqc.Sort, d.QuoteCol)
+
+		// Preload associations if specified
+		for _, p := range preload {
+			db = db.Preload(p)
+		}
 
 		// Retrieve data
 		if err := db.Find(output).Error; err != nil {
