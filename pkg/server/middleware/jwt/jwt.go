@@ -21,9 +21,9 @@ func New(algo, secretKey string, durations ...int) *Service {
 
 	var accessDuration, refreshDuration int
 	switch len(durations) {
-	case 0:
-		accessDuration = durations[0]
 	case 1:
+		accessDuration = durations[0]
+	case 2:
 		accessDuration = durations[0]
 		refreshDuration = durations[1]
 	default:

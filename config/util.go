@@ -35,42 +35,34 @@ func Load(dest interface{}) error {
 
 // LoadWithOptions fills configuration from various sources into destination struct.
 //
-// Overwriting order: .env file < environment variables < AWS Parameter Store
+// Overwriting order: .env file < OS environment variables < AWS Parameter Store
 func LoadWithOptions(dest interface{}, opts Options) error {
 	envvars := map[string]string{}
 
-	// overwrite with values from .env file
-	if opts.DotenvPath != "" {
-		if err := LoadFromDotenv(envvars, opts.DotenvPath); err != nil {
+	// Load values from dotenv file
+	if dotenvPath := getDotenvPath(opts); dotenvPath != "" {
+		if err := LoadFromDotenv(envvars, dotenvPath); err != nil {
 			return fmt.Errorf("error preloading dotenv: %w", err)
 		}
 	}
 
-	// overwrite with values from .env.local file
-	if !IsLambda() {
-		if err := LoadFromDotenv(envvars, ".env.local"); err != nil {
-			return fmt.Errorf("error preloading dotenv local: %w", err)
-		}
-	}
-
-	// overwrite with OS environment variables
-	if opts.Environment == nil {
-		LoadFromEnv(envvars)
-	} else {
-		// use values from options if provided
+	// Overwrite with OS environment variables
+	if opts.Environment != nil {
 		for k, v := range opts.Environment {
 			envvars[k] = v
 		}
+	} else {
+		LoadFromEnv(envvars)
 	}
 
-	// overwrite with params from AWS Parameter Store
+	// Load values from AWS Parameter Store if path is specified
 	if opts.AwsParameterStorePath != "" {
 		if err := LoadFromAwsParameterStore(envvars, opts.AwsParameterStorePath, nil); err != nil {
 			return fmt.Errorf("error preloading awsenv: %w", err)
 		}
 	}
 
-	// put everything together
+	// Parse environment variables into destination struct
 	opts.Options.Environment = envvars
 	if err := env.ParseWithOptions(dest, opts.Options); err != nil {
 		return fmt.Errorf("error parsing env: %w", err)
@@ -152,4 +144,11 @@ type SsmSvc interface {
 // IsLambda checks whether the code is running on lambda using predefined Lambda environment variables
 func IsLambda() bool {
 	return os.Getenv("AWS_LAMBDA_FUNCTION_NAME") != "" && os.Getenv("AWS_LAMBDA_FUNCTION_VERSION") != ""
+}
+
+func getDotenvPath(opts Options) string {
+	if IsLambda() && opts.DotenvPath != "" {
+		return opts.DotenvPath
+	}
+	return ".env.local"
 }
