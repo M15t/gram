@@ -7,7 +7,7 @@ type ListCondition[T any] struct {
 	// Number of records per page
 	PerPage int
 	// Field names for sorting, separated by comma.
-	// The direction is specified by `+` (ASC) and `-` (DESC) prefix, eg: `+name,-age`
+	// The direction is specified by `+` (ASC) and `-` (DESC) prefix, eg: `+id,-id`
 	// WARNING: SQL Injection vulnerability! User input must be validated before sending to database
 	Sort string
 	// Whether to count the total records. If not, the returning `count` number will always be zero.
@@ -29,7 +29,7 @@ type ListQueryRequest struct {
 	// default: 25
 	PerPage int `json:"pp" query:"pp"`
 	// Field names for sorting, separated by comma.
-	// The direction is specified by `+` (ASC) and `-` (DESC) prefix, eg: `+name,-age`
+	// The direction is specified by `+` (ASC) and `-` (DESC) prefix, eg: `+id,-id`
 	// in: query
 	Sort string `json:"s" query:"s"`
 }

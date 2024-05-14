@@ -40,7 +40,7 @@ func (d *Repo[T]) Create(ctx context.Context, input *T) error {
 }
 
 // CreateInBatches creates multiple records in batches
-func (d *Repo[T]) CreateInBatches(ctx context.Context, input []T, batchSize int) error {
+func (d *Repo[T]) CreateInBatches(ctx context.Context, input []*T, batchSize int) error {
 	return d.GDB.WithContext(ctx).CreateInBatches(input, batchSize).Error
 }
 
