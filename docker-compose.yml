@@ -3,38 +3,67 @@ services:
   #* EnableMySQL: replace the `db` service with the one below
   db:
     build:
-      context: ./docker/db
-      dockerfile: Dockerfile.mysql
-    container_name: gram-mysql-db
+      context: ./
+      dockerfile: ./docker/db/Dockerfile.mysql
+    container_name: gram-db
+    env_file:
+      - .env.local
     ports:
-      - "3307:3306"
+      - "3306:3306"
     environment:
       # for root user. other users are created in provision script
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: maindb
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-password}
+      MYSQL_DATABASE: ${DB_DATABASE:-maindb}
       TZ: UTC
     volumes:
       - db-data:/var/lib/mysql
-  #* EnablePostgreSQL: replace the `db` service with the one below
-  # db:
-  #   build:
-  #     context: ./docker/db
-  #     # change to `Dockerfile.postgis` when working with location data
-  #     dockerfile: Dockerfile.postgres
-  #   container_name: gram-postgresql-db
-  #   ports:
-  #     - "${DB_PORT:-5432}:5432"
-  #   environment:
-  #     POSTGRES_DB: ${DB_DATABASE:-maindb}
-  #     # Superuser creds, should be used by DBA only
-  #     # Application users are created in provision script
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_PASSWORD: postgres
-  #     TZ: UTC
-  #     PGTZ: UTC
-  #   volumes:
-  #     - db-data:/var/lib/postgresql/data
+    networks:
+      - echo-stack
+
+  api:
+    build:
+      context: ./
+      dockerfile: ./docker/api/Dockerfile.main
+    container_name: gram-api
+    env_file:
+      - .env.local
+    ports:
+      - 8080:8080
+    environment:
+      DB_HOST: db # Use the service name 'db' as the hostname for MySQL
+      DB_PORT: 3306 # Default MySQL port
+      DB_USER: ${DB_USER:-root} # Modify as per your setup
+      DB_PASSWORD: ${DB_PASSWORD:-password}
+      DB_DATABASE: ${DB_DATABASE:-maindb}
+    depends_on:
+      - db # Ensure 'db' service starts before 'api'
+    networks:
+      - echo-stack
+    # * EnablePostgreSQL: replace the `db` service with the one below
+    # db:
+    #   build:
+    #     context: ./docker/db
+    #     # change to `Dockerfile.postgis` when working with location data
+    #     dockerfile: Dockerfile.postgres
+    #   container_name: gram-postgresql-db
+    #   ports:
+    #     - "${DB_PORT:-5432}:5432"
+    #   environment:
+    #     POSTGRES_DB: ${DB_DATABASE:-maindb}
+    #     # Superuser creds, should be used by DBA only
+    #     # Application users are created in provision script
+    #     POSTGRES_USER: postgres
+    #     POSTGRES_PASSWORD: postgres
+    #     TZ: UTC
+    #     PGTZ: UTC
+    #   volumes:
+    #     - db-data:/var/lib/postgresql/data
 
 
 volumes:
   db-data:
+
+
+networks:
+  echo-stack:
+    driver: bridge

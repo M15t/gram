@@ -112,7 +112,7 @@ func (d *Repo[T]) ReadAllByCondition(ctx context.Context, output interface{}, co
 		// Parse and apply filter conditions
 		lqc.Filter = ParseConds(lqc.Filter)
 		if len(lqc.Filter) > 0 {
-			db = d.GDB.Where(lqc.Filter[0], lqc.Filter[1:]...)
+			db = db.Where(lqc.Filter[0], lqc.Filter[1:]...)
 		}
 
 		// Apply pagination and sorting

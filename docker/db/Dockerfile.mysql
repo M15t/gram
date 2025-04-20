@@ -1,5 +1,5 @@
 FROM mysql:8
 
-COPY ./provision.my.sql /docker-entrypoint-initdb.d/provision.sql
+COPY ./docker/db/provision.my.sql /docker-entrypoint-initdb.d/provision.sql
 
 

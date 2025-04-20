@@ -1,0 +1,12 @@
+.git
+README.md
+functions/**
+deploy/**
+scripts/**
+
+.dockerignore
+docker-compose.yml
+.env
+.env.*
+test.go
+Makefile

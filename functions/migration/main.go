@@ -154,19 +154,6 @@ func Run() (respErr error) {
 				return tx.Migrator().DropTable("sessions")
 			},
 		},
-		// create "memos" table
-		{
-			ID: "202401051324",
-			Migrate: func(tx *gorm.DB) error {
-				if err := tx.Set("gorm:table_options", defaultTableOpts).AutoMigrate(&types.Memo{}); err != nil {
-					return err
-				}
-				return nil
-			},
-			Rollback: func(tx *gorm.DB) error {
-				return tx.Migrator().DropTable("memos")
-			},
-		},
 	})
 
 	return nil

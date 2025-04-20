@@ -1,0 +1,14 @@
+# Start with the official Golang image
+FROM --platform=amd64 golang:1.22-alpine
+
+# Set the working directory inside the container
+WORKDIR /app
+
+RUN go install github.com/air-verse/air@latest
+
+# Copy the rest of the application code
+COPY . .
+RUN go mod download
+
+# Command to run the Go application
+CMD ["air", "-c", ".air.toml"]

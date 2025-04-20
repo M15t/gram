@@ -98,7 +98,7 @@ func main() {
 	adminRouter := v1Router.Group("/admin")
 	adminRouter.Use(jwtSvc.MWFunc(), contextutil.MWContext())
 	session.NewHTTP(sessionSvc, adminRouter.Group("/sessions"))
-	user.NewHTTP(userSvc, adminRouter.Group("/users"))
+	user.NewHTTP(userSvc, adminRouter.Group("/user"))
 
 	server.Start(e, config.IsLambda())
 }
